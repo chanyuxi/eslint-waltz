@@ -1,0 +1,63 @@
+{
+  "name": "@chanyuxi/eslint-waltz",
+  "type": "module",
+  "version": "0.0.0-alpha.1",
+  "packageManager": "pnpm@10.4.1",
+  "description": "Great, all I can say is thank you @antfu/eslint-config",
+  "author": "chanyuxi <2438149743@qq.com> (https://github.com/chanyuxi)",
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "ISC",
+  "keywords": [
+    "chanyuxi",
+    "eslint",
+    "config"
+  ],
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "import": "./dist/index.js",
+    "default": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "pnpm gen && rollup -c rollup.config.ts --configPlugin @rollup/plugin-typescript",
+    "gen": "tsx scripts/typegen.ts",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
+    "typeCheck": "tsc"
+  },
+  "peerDependencies": {
+    "@stylistic/eslint-plugin": "^5.2.2",
+    "eslint": "^9.32.0",
+    "eslint-config-flat-gitignore": "^2.1.0",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-jsonc": "^2.20.1",
+    "globals": "^16.3.0",
+    "jsonc-eslint-parser": "^2.4.0",
+    "typescript-eslint": "^8.38.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^12.1.4",
+    "@stylistic/eslint-plugin": "^5.2.2",
+    "@types/node": "^24.1.0",
+    "eslint": "^9.32.0",
+    "eslint-config-flat-gitignore": "^2.1.0",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-jsonc": "^2.20.1",
+    "eslint-typegen": "^2.3.0",
+    "globals": "^16.3.0",
+    "jiti": "^2.5.1",
+    "jsonc-eslint-parser": "^2.4.0",
+    "rollup": "^4.46.2",
+    "rollup-plugin-delete": "^3.0.1",
+    "rollup-plugin-dts": "^6.2.1",
+    "ts-node": "^10.9.2",
+    "tslib": "^2.8.1",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.38.0"
+  }
+}
