@@ -1,4 +1,4 @@
-export { default as ignoreConfig } from './gitignore'
+export { default as gitignoreConfig } from './gitignore'
 export { default as importsConfig } from './imports'
 export { default as jsConfig } from './js'
 export { default as jsoncConfig } from './jsonc'

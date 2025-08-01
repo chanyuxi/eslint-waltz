@@ -1,5 +1,5 @@
 import {
-  ignoreConfig,
+  gitignoreConfig,
   importsConfig,
   jsConfig,
   jsoncConfig,
@@ -17,7 +17,7 @@ async function waltz(options: WaltzOptions = {}, ...orders: LinterConfig[]) {
   const configs: UnresolvedLinterConfig[] = []
 
   if (options.gitignore) {
-    configs.push(ignoreConfig(options.gitignore))
+    configs.push(gitignoreConfig(options.gitignore))
   }
 
   // These configurations are mandatory to enable
@@ -43,7 +43,7 @@ async function waltz(options: WaltzOptions = {}, ...orders: LinterConfig[]) {
     }))
   }
 
-  const resolvedConfigs = (await Promise.all(configs.flat(Infinity))).flat(Infinity)
+  const resolvedConfigs = (await Promise.all(configs)).flat(Infinity)
 
   return [
     ...resolvedConfigs,
@@ -51,4 +51,4 @@ async function waltz(options: WaltzOptions = {}, ...orders: LinterConfig[]) {
   ]
 }
 
-export { waltz as default }
+export default waltz
