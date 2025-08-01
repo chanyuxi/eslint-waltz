@@ -1,21 +1,29 @@
-import { JS_FILES, TS_FILES } from '../constants'
+import { ALL_SCRIPTS_FILES, JS_FILES, TS_FILES } from '../constants'
 import { importStylisticPlugin } from '../packages'
-import { LinterConfig, StylisticOptions } from '../types'
 
-export default async function stylisticConfig(options: StylisticOptions = {}): Promise<LinterConfig> {
+import type { LinterConfig, StylisticOptions } from '../types'
+
+export default async function stylisticConfig(options: StylisticOptions = {}): Promise<LinterConfig[]> {
   const eslintStylistic = await importStylisticPlugin()
 
+  // Directly use the generated recommendation rules
   const configs = eslintStylistic.configs.customize()
 
-  return {
-    name: 'waltz/stylistic/setup',
-    files: options.files ?? [JS_FILES, TS_FILES],
-    plugins: {
-      '@stylistic': eslintStylistic,
+  return [
+    {
+      name: 'waltz/stylistic/setup',
+      files: ALL_SCRIPTS_FILES,
+      plugins: {
+        '@stylistic': eslintStylistic,
+      },
     },
-    rules: {
-      ...configs.rules,
-      ...options.overrides,
+    {
+      name: 'waltz/stylistic/rules',
+      files: options.files ?? [JS_FILES, TS_FILES],
+      rules: {
+        ...configs.rules,
+        ...options.overrides,
+      },
     },
-  }
+  ]
 }

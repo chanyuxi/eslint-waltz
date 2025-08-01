@@ -10,6 +10,10 @@ export interface LinterConfig extends Omit<Linter.Config, 'rules'> {
   rules?: Rules
 }
 
+type Arraiable<T> = T | Array<T>
+
+export type UnresolvedLinterConfig = Arraiable<LinterConfig> | Promise<Arraiable<LinterConfig>>
+
 interface SharedOptions {
   /**
    * Each configuration automatically lints all corresponding files, this option is used to override
@@ -28,6 +32,7 @@ export interface JsOptions extends SharedOptions {
 export type TsOptions = SharedOptions
 export type StylisticOptions = SharedOptions
 export type JsoncOptions = SharedOptions
+export type ReactOptions = SharedOptions
 
 export interface WaltzOptions {
   /**
@@ -65,4 +70,8 @@ export interface WaltzOptions {
    *
    */
   imports?: boolean
+  /**
+   * @default false
+   */
+  react?: boolean | ReactOptions
 }

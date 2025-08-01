@@ -4,7 +4,14 @@ import { JS_FILES } from '../constants'
 
 import type { JsOptions, LinterConfig } from '../types'
 
-export default function jsConfig(config: JsOptions = {}): LinterConfig {
+interface relativeOptions {
+  isEnableReact: boolean
+}
+
+export default function jsConfig(
+  config: JsOptions = {},
+  relative: relativeOptions,
+): LinterConfig {
   return {
     name: 'waltz/js/rules',
     files: config.files ?? [JS_FILES],
@@ -13,6 +20,11 @@ export default function jsConfig(config: JsOptions = {}): LinterConfig {
         ...(config.globals
           ? config.globals.map(name => globals[name]).reduce((a, b) => ({ ...a, ...b }), {})
           : {}),
+      },
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: relative.isEnableReact,
+        },
       },
     },
     rules: {

@@ -61,13 +61,15 @@ export default async function jsoncConfig(): Promise<LinterConfig[]> {
       },
     },
     {
+      name: 'waltz/jsonc/sort/package-json',
       files: ['**/package.json'],
-      name: 'antfu/sort/package-json',
       rules: {
         'jsonc/sort-array-values': [
           'error',
           {
-            order: { type: 'asc' },
+            order: {
+              type: 'asc',
+            },
             pathPattern: '^files$',
           },
         ],
@@ -124,11 +126,16 @@ export default async function jsoncConfig(): Promise<LinterConfig[]> {
             pathPattern: '^$',
           },
           {
-            order: { type: 'asc' },
+            order: {
+              type: 'asc',
+            },
             pathPattern: '^(?:dev|peer|optional|bundled)?[Dd]ependencies(Meta)?$',
           },
           {
-            order: { type: 'asc' },
+            order: {
+              type: 'asc',
+
+            },
             pathPattern: '^(?:resolutions|overrides|pnpm.overrides)$',
           },
           {
@@ -160,16 +167,16 @@ export default async function jsoncConfig(): Promise<LinterConfig[]> {
       },
     },
     {
+      name: 'waltz/jsonc/sort/tsconfig-json',
       files: ['**/[jt]sconfig.json', '**/[jt]sconfig.*.json'],
-      name: 'antfu/sort/tsconfig-json',
       rules: {
         'jsonc/sort-keys': [
           'error',
           {
             order: [
+              'references',
               'extends',
               'compilerOptions',
-              'references',
               'files',
               'include',
               'exclude',

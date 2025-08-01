@@ -1,0 +1,7 @@
+export { default as ignoreConfig } from './gitignore'
+export { default as importsConfig } from './imports'
+export { default as jsConfig } from './js'
+export { default as jsoncConfig } from './jsonc'
+export { default as stylisticConfig } from './stylistic'
+export { default as tsConfig } from './ts'
+export { default as reactConfig } from './react'
