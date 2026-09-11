@@ -32,6 +32,15 @@ export default defineConfig([
     plugins: [nodeResolver(), commonjs(), typescript()],
   },
   {
+    input: 'src/cli/index.ts',
+    external: [/^node:/],
+    output: {
+      file: 'dist/cli.js',
+      format: 'esm',
+    },
+    plugins: [nodeResolver(), commonjs(), typescript()],
+  },
+  {
     input: 'src/index.ts',
     output: {
       file: 'dist/index.d.ts',

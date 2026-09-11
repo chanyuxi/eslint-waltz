@@ -58,3 +58,13 @@ export default waltz({}, {
 ```
 
 Run `pnpm run check` before committing. `pnpm pack` and `npm publish` build the package automatically through the `prepack` lifecycle.
+
+#### VS Code synchronization
+
+After installing the package, run this command from your project root:
+
+```bash
+npx eslint-waltz sync-vscode
+```
+
+It creates or updates `.vscode/settings.json` with ESLint fix-on-save settings while preserving other settings and JSONC comments.
