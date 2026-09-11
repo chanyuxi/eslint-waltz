@@ -74,9 +74,6 @@
     "eslint-config-flat-gitignore": {
       "optional": true
     },
-    "eslint-plugin-import": {
-      "optional": true
-    },
     "eslint-plugin-react-debug": {
       "optional": true
     },

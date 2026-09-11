@@ -14,8 +14,8 @@ The following configuration modules are available:
 - ✅ Json
 - ✅ Import
 - ✅ React
-- JSONC is enabled by default and can be disabled with `json: false`.
-- TypeScript, imports, React, and gitignore support are opt-in.
+- JSONC and imports are enabled by default and can be disabled with `json: false` and `imports: false`.
+- TypeScript, React, and gitignore support are opt-in.
 
 # Usage
 
@@ -24,10 +24,10 @@ The following configuration modules are available:
 Install the core package and its core ESLint peers:
 
 ```bash
-pnpm add -D @chanyuxi/eslint-waltz eslint @eslint/js @stylistic/eslint-plugin eslint-plugin-jsonc jsonc-eslint-parser globals
+pnpm add -D @chanyuxi/eslint-waltz eslint @eslint/js @stylistic/eslint-plugin eslint-plugin-jsonc eslint-plugin-import jsonc-eslint-parser globals
 ```
 
-Install the peer packages for any optional modules you enable, such as `typescript-eslint`, `eslint-plugin-import`, or the React ESLint plugins.
+Install the peer packages for any optional modules you enable, such as `typescript-eslint` or the React ESLint plugins.
 
 #### Configuration
 
@@ -37,10 +37,9 @@ Create a `eslint.config.ts` file in the project root directory and configure it 
 import waltz from '@chanyuxi/eslint-waltz'
 
 export default waltz({
-  // JSONC is enabled by default
+  // JSONC and imports are enabled by default
   json: true,
   ts: true,
-  imports: true,
   react: true,
   js: { globals: ['browser'] },
 })

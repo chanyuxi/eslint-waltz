@@ -49,11 +49,13 @@ async function waltz(
     configs.push(tsConfig(options.ts))
   }
 
-  if (options.imports) {
+  if (options.imports !== false) {
     configs.push(
       importsConfig(
         isEnableTypeScript,
-        options.imports === true ? {} : options.imports,
+        options.imports === true || options.imports === undefined
+          ? {}
+          : options.imports,
       ),
     )
   }

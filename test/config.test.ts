@@ -35,19 +35,27 @@ test('json can be disabled and configured', async () => {
 })
 
 test('script-only features do not match TypeScript unless enabled', async () => {
-  const javascriptOnly = await waltz({ imports: true })
+  const javascriptOnly = await waltz()
   const javascriptImportRules = configByName(
     javascriptOnly,
     'waltz/imports/rules',
   )
   assert.deepEqual(javascriptImportRules?.files, [JS_FILES])
 
-  const withTypeScript = await waltz({ imports: true, ts: true })
+  const withTypeScript = await waltz({ ts: true })
   const typescriptImportRules = configByName(
     withTypeScript,
     'waltz/imports/rules',
   )
   assert.deepEqual(typescriptImportRules?.files, [JS_FILES, TS_FILES])
+})
+
+test('imports are enabled by default and can be disabled', async () => {
+  const defaults = await waltz()
+  assert.notEqual(configByName(defaults, 'waltz/imports/setup'), undefined)
+
+  const disabled = await waltz({ imports: false })
+  assert.equal(configByName(disabled, 'waltz/imports/setup'), undefined)
 })
 
 test('React TypeScript exceptions do not disable rules for JavaScript', async () => {
