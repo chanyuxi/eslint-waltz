@@ -1,5 +1,16 @@
 # @chanyuxi/eslint-waltz
 
+## 1.0.0
+
+### Major Changes
+
+- a036dcd: Migrate to ESLint 10 and replace `eslint-plugin-import` with `eslint-plugin-import-x` while preserving the existing `imports/*` rule IDs.
+- a036dcd: Replace the deprecated stylistic JSX prop sorting rule with the independent Perfectionist configuration. The default configuration enables `sort-jsx-props`, and full recommended presets can be selected.
+
+### Minor Changes
+
+- a036dcd: Add support for Tailwind CSS.
+
 ## 0.1.1
 
 ### Patch Changes
