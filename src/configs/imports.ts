@@ -1,5 +1,5 @@
 import { ALL_SCRIPTS_FILES, JS_FILES } from '../constants'
-import { importImportsPlugin } from '../packages'
+import { importImportXPlugin } from '../packages'
 
 import type { ImportsOptions, LinterConfig } from '../types'
 
@@ -7,7 +7,7 @@ export default async function importsConfig(
   isEnableTypeScript = false,
   options: ImportsOptions = {},
 ): Promise<LinterConfig[]> {
-  const importsPlugin = await importImportsPlugin()
+  const importsPlugin = await importImportXPlugin()
   const scriptFiles = isEnableTypeScript ? ALL_SCRIPTS_FILES : [JS_FILES]
   const files = options.files ?? scriptFiles
 

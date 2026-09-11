@@ -3,6 +3,7 @@ import globals from 'globals'
 import type { RuleOptions } from './typegen'
 import type { Linter } from 'eslint'
 import type { FlatGitignoreOptions } from 'eslint-config-flat-gitignore'
+import type { PluginSettings } from 'eslint-plugin-tailwindcss'
 
 type Rules = Record<string, Linter.RuleEntry | undefined> & RuleOptions
 
@@ -48,6 +49,41 @@ export type JsoncOptions = SharedOptions
 export type ImportsOptions = SharedOptions
 export type ReactOptions = SharedOptions
 
+export type PerfectionistPreset
+  = 'recommended-alphabetical'
+    | 'recommended-natural'
+    | 'recommended-line-length'
+    | 'recommended-custom'
+
+export interface PerfectionistOptions extends SharedOptions {
+  /**
+   * Select one of Perfectionist's full recommended presets.
+   *
+   * Without a preset, only `perfectionist/sort-jsx-props` is enabled by
+   * default. A preset enables all of the plugin's sorting rules.
+   */
+  preset?: PerfectionistPreset
+  /**
+   * Configure shared Perfectionist settings.
+   *
+   * Settings are passed through under the `perfectionist` key, for example
+   * `{ perfectionist: { type: 'natural', order: 'asc' } }`.
+   */
+  settings?: Linter.Config['settings']
+}
+
+export interface TailwindcssOptions extends SharedOptions {
+  /**
+   * Configure the shared settings used by `eslint-plugin-tailwindcss`.
+   *
+   * Tailwind CSS v4 projects should provide `cssConfigPath` under the
+   * `tailwindcss` settings key when the default path is not appropriate.
+   */
+  settings?: {
+    tailwindcss?: PluginSettings
+  }
+}
+
 export interface WaltzOptions {
   /**
    * Treat patterns from `.gitignore` as global ESLint ignores.
@@ -91,13 +127,26 @@ export interface WaltzOptions {
    *
    * This configuration is always enabled and uses `@stylistic/eslint-plugin`.
    * It targets JavaScript files by default, and also targets TypeScript files
-   * when `ts` is enabled. The JSX prop-sorting rule is enabled in addition to
-   * the plugin's customized rules.
+   * when `ts` is enabled. Perfectionist is provided as a separate default
+   * configuration through the `perfectionist` option.
    *
    * @default {}
    * @see https://eslint.style/
+   * @see https://perfectionist.dev/rules/sort-jsx-props
    */
   stylistic?: StylisticOptions
+  /**
+   * Configure Perfectionist sorting rules.
+   *
+   * This configuration is enabled by default with
+   * `perfectionist/sort-jsx-props`. Set it to `false` to disable it, or pass
+   * a `preset` to enable one of the full recommended configurations.
+   *
+   * @default true
+   * @see https://perfectionist.dev/configs
+   * @see https://perfectionist.dev/rules/sort-jsx-props
+   */
+  perfectionist?: boolean | PerfectionistOptions
   /**
    * Enable linting for JSON, JSON5, and JSONC files.
    *
@@ -118,7 +167,7 @@ export interface WaltzOptions {
    * object to change the file scope or override rules.
    *
    * @default true
-   * @see https://github.com/import-js/eslint-plugin-import
+   * @see https://github.com/un-ts/eslint-plugin-import-x
    */
   imports?: boolean | ImportsOptions
   /**
@@ -132,4 +181,18 @@ export interface WaltzOptions {
    * @see https://github.com/Rel1cx/eslint-react
    */
   react?: boolean | ReactOptions
+  /**
+   * Enable Tailwind CSS class name linting.
+   *
+   * The module is disabled by default because it requires a Tailwind CSS v4
+   * project, `eslint-plugin-tailwindcss`, and Node.js `>=20.19.0` when
+   * enabled. When enabled, JavaScript files are included by default;
+   * TypeScript files are included as well when `ts` is enabled. Pass an
+   * options object to change the file scope, configure the Tailwind CSS
+   * settings, or override rules.
+   *
+   * @default false
+   * @see https://github.com/francoismassart/eslint-plugin-tailwindcss
+   */
+  tailwindcss?: boolean | TailwindcssOptions
 }

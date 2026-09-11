@@ -52,10 +52,71 @@ test('script-only features do not match TypeScript unless enabled', async () => 
 
 test('imports are enabled by default and can be disabled', async () => {
   const defaults = await waltz()
-  assert.notEqual(configByName(defaults, 'waltz/imports/setup'), undefined)
+  const setup = configByName(defaults, 'waltz/imports/setup')
+
+  assert.equal(setup?.plugins?.imports !== undefined, true)
+  assert.notEqual(setup, undefined)
 
   const disabled = await waltz({ imports: false })
   assert.equal(configByName(disabled, 'waltz/imports/setup'), undefined)
+})
+
+test('Perfectionist replaces the deprecated JSX prop sorting rule', async () => {
+  const configs = await waltz()
+  const setup = configByName(configs, 'waltz/perfectionist/setup')
+  const rules = configByName(configs, 'waltz/perfectionist/rules')
+
+  assert.equal(setup?.plugins?.perfectionist !== undefined, true)
+  assert.equal(rules?.rules?.['perfectionist/sort-jsx-props'], 'error')
+  assert.equal(rules?.rules?.['@stylistic/jsx-sort-props'], undefined)
+})
+
+test('Perfectionist recommended presets can be selected', async () => {
+  const configs = await waltz({
+    perfectionist: { preset: 'recommended-alphabetical' },
+  })
+  const rules = configByName(configs, 'waltz/perfectionist/rules')
+
+  assert.notEqual(rules?.rules?.['perfectionist/sort-objects'], undefined)
+  assert.notEqual(rules?.rules?.['perfectionist/sort-jsx-props'], undefined)
+})
+
+test('Perfectionist can be disabled', async () => {
+  const configs = await waltz({ perfectionist: false })
+
+  assert.equal(configByName(configs, 'waltz/perfectionist/setup'), undefined)
+})
+
+test('Tailwind CSS can be enabled and configured', async () => {
+  const configs = await waltz({
+    tailwindcss: {
+      settings: {
+        tailwindcss: { cssConfigPath: './src/styles.css' },
+      },
+    },
+  })
+  const setup = configByName(configs, 'waltz/tailwindcss/setup')
+  const rules = configByName(configs, 'waltz/tailwindcss/rules')
+
+  assert.deepEqual(setup?.files, [JS_FILES])
+  assert.equal(setup?.plugins?.tailwindcss !== undefined, true)
+  assert.equal(rules?.rules?.['tailwindcss/classnames-order'], 'warn')
+  assert.deepEqual(rules?.settings, {
+    tailwindcss: { cssConfigPath: './src/styles.css' },
+  })
+})
+
+test('Tailwind CSS is disabled by default', async () => {
+  const configs = await waltz()
+
+  assert.equal(configByName(configs, 'waltz/tailwindcss/setup'), undefined)
+})
+
+test('Tailwind CSS extends to TypeScript files when enabled', async () => {
+  const configs = await waltz({ tailwindcss: true, ts: true })
+  const setup = configByName(configs, 'waltz/tailwindcss/setup')
+
+  assert.deepEqual(setup?.files, [JS_FILES, TS_FILES])
 })
 
 test('React TypeScript exceptions do not disable rules for JavaScript', async () => {
@@ -66,10 +127,13 @@ test('React TypeScript exceptions do not disable rules for JavaScript', async ()
     'waltz/react/typescript-rules',
   )
 
-  assert.equal(reactRules?.rules?.['@eslint-react/jsx-uses-vars'], 'warn')
+  assert.equal(
+    reactRules?.rules?.['@eslint-react/dom/no-unknown-property'],
+    'warn',
+  )
   assert.deepEqual(reactTypeScriptRules?.files, [TS_FILES])
   assert.equal(
-    reactTypeScriptRules?.rules?.['@eslint-react/jsx-uses-vars'],
+    reactTypeScriptRules?.rules?.['@eslint-react/dom/no-unknown-property'],
     'off',
   )
 })

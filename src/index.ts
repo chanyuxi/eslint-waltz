@@ -3,8 +3,10 @@ import {
   importsConfig,
   jsConfig,
   jsoncConfig,
+  perfectionistConfig,
   reactConfig,
   stylisticConfig,
+  tailwindcssConfig,
   tsConfig,
 } from './configs'
 
@@ -68,6 +70,30 @@ async function waltz(
     )
   }
 
+  if (options.perfectionist !== false) {
+    configs.push(
+      perfectionistConfig(
+        options.perfectionist === true || options.perfectionist === undefined
+          ? {}
+          : options.perfectionist,
+        {
+          isEnableTypeScript,
+        },
+      ),
+    )
+  }
+
+  if (options.tailwindcss) {
+    configs.push(
+      tailwindcssConfig(
+        options.tailwindcss === true ? {} : options.tailwindcss,
+        {
+          isEnableTypeScript,
+        },
+      ),
+    )
+  }
+
   const resolvedConfigs = (await Promise.all(configs)).flat()
 
   return [...resolvedConfigs, ...orders]
@@ -78,9 +104,12 @@ export type {
   JsoncOptions,
   JsOptions,
   LinterConfig,
+  PerfectionistOptions,
+  PerfectionistPreset,
   ReactOptions,
   SharedOptions,
   StylisticOptions,
+  TailwindcssOptions,
   TsOptions,
   UnresolvedLinterConfig,
   WaltzOptions,

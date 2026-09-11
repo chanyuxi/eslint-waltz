@@ -83,7 +83,6 @@ export default async function stylisticConfig(
   // '@stylistic/jsx-max-props-per-line'
   // '@stylistic/jsx-one-expression-per-line'
   // '@stylistic/jsx-quotes'
-  // '@stylistic/jsx-sort-props'
   // '@stylistic/jsx-tag-spacing'
   // '@stylistic/jsx-wrap-multilines'
 
@@ -100,7 +99,6 @@ export default async function stylisticConfig(
       files: options.files ?? scriptFiles,
       rules: {
         ...configs.rules,
-        '@stylistic/jsx-sort-props': 'error',
         ...options.overrides,
       },
     },

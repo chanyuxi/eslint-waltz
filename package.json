@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.1.1",
   "packageManager": "pnpm@10.4.1",
-  "description": "A composable ESLint flat config for JavaScript, TypeScript, JSONC, imports, and React.",
+  "description": "A composable ESLint flat config for JavaScript, TypeScript, JSONC, imports, React, Tailwind CSS, and Perfectionist.",
   "author": "chanyuxi <2438149743@qq.com> (https://github.com/chanyuxi)",
   "license": "ISC",
   "homepage": "https://github.com/chanyuxi/eslint-waltz",
@@ -37,7 +37,7 @@
     "dist"
   ],
   "engines": {
-    "node": ">=18.18.0"
+    "node": ">=20.19.0"
   },
   "scripts": {
     "build": "rimraf ./dist && pnpm gen && rollup -c rollup.config.ts --configPlugin @rollup/plugin-typescript",
@@ -54,21 +54,24 @@
     "prepare": "husky"
   },
   "peerDependencies": {
-    "@eslint/js": "^9.32.0",
-    "@stylistic/eslint-plugin": "^5.2.2",
-    "eslint": "^9.32.0",
-    "eslint-config-flat-gitignore": "^2.1.0",
-    "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-jsonc": "^2.20.1",
-    "eslint-plugin-react-debug": "^1.52.3",
-    "eslint-plugin-react-dom": "^1.52.3",
-    "eslint-plugin-react-hooks-extra": "^1.52.3",
-    "eslint-plugin-react-naming-convention": "^1.52.3",
-    "eslint-plugin-react-web-api": "^1.52.3",
-    "eslint-plugin-react-x": "^1.52.3",
-    "globals": "^16.3.0",
-    "jsonc-eslint-parser": "^2.4.0",
-    "typescript-eslint": "^8.38.0"
+    "@eslint/js": "^10.0.1",
+    "@stylistic/eslint-plugin": "^5.10.0",
+    "eslint": "^10.10.0",
+    "eslint-config-flat-gitignore": "^2.4.0",
+    "eslint-plugin-import-x": "^4.17.1",
+    "eslint-plugin-jsonc": "^3.4.2",
+    "eslint-plugin-perfectionist": "^5.11.0",
+    "eslint-plugin-react-debug": "^5.19.0",
+    "eslint-plugin-react-dom": "^5.19.0",
+    "eslint-plugin-react-hooks-extra": "^2.13.0",
+    "eslint-plugin-react-naming-convention": "^5.19.0",
+    "eslint-plugin-react-web-api": "^5.19.0",
+    "eslint-plugin-react-x": "^5.19.0",
+    "eslint-plugin-tailwindcss": "^4.4.0",
+    "globals": "^17.12.0",
+    "jsonc-eslint-parser": "^3.3.0",
+    "tailwindcss": "^4.0.0",
+    "typescript-eslint": "^8.70.0"
   },
   "peerDependenciesMeta": {
     "eslint-config-flat-gitignore": {
@@ -92,6 +95,12 @@
     "eslint-plugin-react-x": {
       "optional": true
     },
+    "eslint-plugin-tailwindcss": {
+      "optional": true
+    },
+    "tailwindcss": {
+      "optional": true
+    },
     "typescript-eslint": {
       "optional": true
     }
@@ -104,33 +113,36 @@
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "@commitlint/types": "^19.8.1",
-    "@eslint/js": "^9.32.0",
+    "@eslint/js": "^10.0.1",
     "@rollup/plugin-commonjs": "^28.0.6",
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-typescript": "^12.1.4",
-    "@stylistic/eslint-plugin": "^5.2.2",
+    "@stylistic/eslint-plugin": "^5.10.0",
     "@types/node": "^24.1.0",
-    "eslint": "^9.32.0",
-    "eslint-config-flat-gitignore": "^2.1.0",
-    "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-jsonc": "^2.20.1",
-    "eslint-plugin-react-debug": "^1.52.3",
-    "eslint-plugin-react-dom": "^1.52.3",
-    "eslint-plugin-react-hooks-extra": "^1.52.3",
-    "eslint-plugin-react-naming-convention": "^1.52.3",
-    "eslint-plugin-react-web-api": "^1.52.3",
-    "eslint-plugin-react-x": "^1.52.3",
-    "eslint-typegen": "^2.3.0",
-    "globals": "^16.3.0",
+    "eslint": "^10.10.0",
+    "eslint-config-flat-gitignore": "^2.4.0",
+    "eslint-plugin-import-x": "^4.17.1",
+    "eslint-plugin-jsonc": "^3.4.2",
+    "eslint-plugin-perfectionist": "^5.11.0",
+    "eslint-plugin-react-debug": "^5.19.0",
+    "eslint-plugin-react-dom": "^5.19.0",
+    "eslint-plugin-react-hooks-extra": "^2.13.0",
+    "eslint-plugin-react-naming-convention": "^5.19.0",
+    "eslint-plugin-react-web-api": "^5.19.0",
+    "eslint-plugin-react-x": "^5.19.0",
+    "eslint-plugin-tailwindcss": "^4.4.0",
+    "eslint-typegen": "^2.3.1",
+    "globals": "^17.12.0",
     "husky": "^9.1.7",
-    "jiti": "^2.5.1",
-    "jsonc-eslint-parser": "^2.4.0",
+    "jiti": "^2.7.0",
+    "jsonc-eslint-parser": "^3.3.0",
     "rimraf": "^6.0.1",
     "rollup": "^4.46.2",
     "rollup-plugin-dts": "^6.2.1",
+    "tailwindcss": "^4.3.3",
     "tslib": "^2.8.1",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.38.0"
+    "typescript-eslint": "^8.70.0"
   }
 }

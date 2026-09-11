@@ -50,8 +50,8 @@ export function importJsoncParser() {
   return import('jsonc-eslint-parser')
 }
 
-export function importImportsPlugin() {
-  return import('eslint-plugin-import')
+export function importImportXPlugin() {
+  return importDefault('eslint-plugin-import-x')
 }
 
 export function importReactPlugin() {
@@ -94,4 +94,12 @@ export function importReactWebApiPlugin() {
     'eslint-plugin-react-web-api',
     d => d as unknown as ESLint.Plugin,
   )
+}
+
+export function importTailwindcssPlugin() {
+  return importDefault('eslint-plugin-tailwindcss')
+}
+
+export function importPerfectionistPlugin() {
+  return importDefault('eslint-plugin-perfectionist')
 }

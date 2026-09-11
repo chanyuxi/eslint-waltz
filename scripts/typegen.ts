@@ -3,8 +3,9 @@ import fs from 'node:fs/promises'
 import { pluginsToRulesDTS } from 'eslint-typegen/core'
 
 import {
-  importImportsPlugin,
+  importImportXPlugin,
   importJsoncPlugin,
+  importPerfectionistPlugin,
   importReactDebugPlugin,
   importReactDomPlugin,
   importReactHookExtraPlugin,
@@ -12,6 +13,7 @@ import {
   importReactPlugin,
   importReactWebApiPlugin,
   importStylisticPlugin,
+  importTailwindcssPlugin,
   importTypeScriptPlugin,
 } from '../src/packages'
 
@@ -21,13 +23,15 @@ const pluginImporters: Record<string, () => Promise<ESLint.Plugin>> = {
   '@typescript-eslint': importTypeScriptPlugin,
   '@stylistic': importStylisticPlugin,
   'jsonc': importJsoncPlugin,
-  'imports': importImportsPlugin,
+  'imports': importImportXPlugin,
   '@eslint-react': importReactPlugin,
   '@eslint-react/dom': importReactDomPlugin,
   '@eslint-react/web-api': importReactWebApiPlugin,
   '@eslint-react/debug': importReactDebugPlugin,
   '@eslint-react/hooks-extra': importReactHookExtraPlugin,
   '@eslint-react/naming-convention': importReactNamingConventionPlugin,
+  'tailwindcss': importTailwindcssPlugin,
+  'perfectionist': importPerfectionistPlugin,
 }
 
 const plugins: Record<string, ESLint.Plugin> = {}

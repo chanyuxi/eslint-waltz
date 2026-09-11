@@ -2,7 +2,7 @@ import commonjs from '@rollup/plugin-commonjs'
 import nodeResolver from '@rollup/plugin-node-resolve'
 import typescript from '@rollup/plugin-typescript'
 import { defineConfig } from 'rollup'
-import dts from 'rollup-plugin-dts'
+import dtsPlugin from 'rollup-plugin-dts'
 
 const external = [
   '@eslint/js',
@@ -11,13 +11,15 @@ const external = [
   '@stylistic/eslint-plugin',
   'eslint-plugin-jsonc',
   'jsonc-eslint-parser',
-  'eslint-plugin-import',
+  'eslint-plugin-import-x',
+  'eslint-plugin-perfectionist',
   'eslint-plugin-react-x',
   'eslint-plugin-react-debug',
   'eslint-plugin-react-dom',
   'eslint-plugin-react-hooks-extra',
   'eslint-plugin-react-naming-convention',
   'eslint-plugin-react-web-api',
+  'eslint-plugin-tailwindcss',
   'globals',
 ]
 
@@ -46,6 +48,6 @@ export default defineConfig([
       file: 'dist/index.d.ts',
       format: 'esm',
     },
-    plugins: [dts()],
+    plugins: [dtsPlugin()],
   },
 ])
