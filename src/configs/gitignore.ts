@@ -8,8 +8,6 @@ export default async function gitignore(
 ): Promise<LinterConfig> {
   return (await importGitignoreSeek())({
     name: 'waltz/gitignore/setup',
-    ...(enable === true
-      ? { strict: true }
-      : enable),
+    ...(enable === true ? { strict: true } : enable),
   })
 }

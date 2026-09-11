@@ -8,9 +8,16 @@ import {
   tsConfig,
 } from './configs'
 
-import type { LinterConfig, UnresolvedLinterConfig, WaltzOptions } from './types'
+import type {
+  LinterConfig,
+  UnresolvedLinterConfig,
+  WaltzOptions,
+} from './types'
 
-async function waltz(options: WaltzOptions = {}, ...orders: LinterConfig[]) {
+async function waltz(
+  options: WaltzOptions = {},
+  ...orders: LinterConfig[]
+): Promise<LinterConfig[]> {
   const isEnableTypeScript = !!options.ts
   const isEnableReact = !!options.react
 
@@ -25,30 +32,56 @@ async function waltz(options: WaltzOptions = {}, ...orders: LinterConfig[]) {
     jsConfig(options.js, {
       isEnableReact,
     }),
-    stylisticConfig(options.stylistic),
-    jsoncConfig(),
+    stylisticConfig(options.stylistic, {
+      isEnableTypeScript,
+    }),
   )
+
+  if (options.json !== false) {
+    configs.push(
+      jsoncConfig(
+        options.json === true || options.json === undefined ? {} : options.json,
+      ),
+    )
+  }
 
   if (isEnableTypeScript) {
     configs.push(tsConfig(options.ts))
   }
 
   if (options.imports) {
-    configs.push(importsConfig())
+    configs.push(
+      importsConfig(
+        isEnableTypeScript,
+        options.imports === true ? {} : options.imports,
+      ),
+    )
   }
 
   if (isEnableReact) {
-    configs.push(reactConfig(options.react, {
-      isEnableTypeScript,
-    }))
+    configs.push(
+      reactConfig(options.react, {
+        isEnableTypeScript,
+      }),
+    )
   }
 
-  const resolvedConfigs = (await Promise.all(configs)).flat(Infinity)
+  const resolvedConfigs = (await Promise.all(configs)).flat()
 
-  return [
-    ...resolvedConfigs,
-    ...orders,
-  ]
+  return [...resolvedConfigs, ...orders]
 }
+
+export type {
+  ImportsOptions,
+  JsoncOptions,
+  JsOptions,
+  LinterConfig,
+  ReactOptions,
+  SharedOptions,
+  StylisticOptions,
+  TsOptions,
+  UnresolvedLinterConfig,
+  WaltzOptions,
+} from './types'
 
 export default waltz

@@ -3,7 +3,8 @@ import {
   importReactDebugPlugin,
   importReactDomPlugin,
   importReactHookExtraPlugin,
-  importReactNamingConventionPlugin, importReactPlugin,
+  importReactNamingConventionPlugin,
+  importReactPlugin,
   importReactWebApiPlugin,
 } from '../packages'
 
@@ -17,7 +18,8 @@ export default async function reactConfig(
   options: boolean | ReactOptions = {},
   relative: relativeOptions,
 ): Promise<LinterConfig[]> {
-  const resolvedConfig: ReactOptions = typeof options === 'boolean' ? {} : options
+  const resolvedConfig: ReactOptions
+    = typeof options === 'boolean' ? {} : options
 
   const [
     reactPlugin,
@@ -34,11 +36,29 @@ export default async function reactConfig(
     importReactNamingConventionPlugin(),
     importReactWebApiPlugin(),
   ] as const)
+  const scriptFiles = relative.isEnableTypeScript
+    ? ALL_SCRIPTS_FILES
+    : [JS_FILES]
+  const ruleFiles = resolvedConfig.files ?? scriptFiles
+  const typeScriptRules: LinterConfig[] = relative.isEnableTypeScript
+    ? [
+        {
+          name: 'waltz/react/typescript-rules',
+          files: resolvedConfig.files ?? [TS_FILES],
+          rules: {
+            '@eslint-react/jsx-uses-react': 'off',
+            '@eslint-react/jsx-uses-vars': 'off',
+            '@eslint-react/dom/no-unknown-property': 'off',
+            ...resolvedConfig.overrides,
+          },
+        },
+      ]
+    : []
 
   return [
     {
       name: 'waltz/react/setup',
-      files: ALL_SCRIPTS_FILES,
+      files: scriptFiles,
       plugins: {
         '@eslint-react': reactPlugin,
         '@eslint-react/dom': reactDomPlugin,
@@ -50,12 +70,12 @@ export default async function reactConfig(
     },
     {
       name: 'waltz/react/rules',
-      files: resolvedConfig.files ?? [JS_FILES, TS_FILES],
+      files: ruleFiles,
       rules: {
         '@eslint-react/jsx-key-before-spread': 'warn',
-        '@eslint-react/jsx-no-duplicate-props': relative.isEnableTypeScript ? 'off' : 'warn',
-        '@eslint-react/jsx-uses-react': relative.isEnableTypeScript ? 'off' : 'warn',
-        '@eslint-react/jsx-uses-vars': relative.isEnableTypeScript ? 'off' : 'warn',
+        '@eslint-react/jsx-no-duplicate-props': 'warn',
+        '@eslint-react/jsx-uses-react': 'warn',
+        '@eslint-react/jsx-uses-vars': 'warn',
         '@eslint-react/no-access-state-in-setstate': 'error',
         '@eslint-react/no-array-index-key': 'warn',
         '@eslint-react/no-children-count': 'warn',
@@ -115,15 +135,11 @@ export default async function reactConfig(
         '@eslint-react/web-api/no-leaked-timeout': 'warn',
         '@eslint-react/hooks-extra/no-direct-set-state-in-use-effect': 'warn',
         '@eslint-react/hooks-extra/no-unnecessary-use-prefix': 'warn',
-        '@eslint-react/hooks-extra/prefer-use-state-lazy-initialization': 'warn',
+        '@eslint-react/hooks-extra/prefer-use-state-lazy-initialization':
+          'warn',
         '@eslint-react/naming-convention/context-name': 'warn',
-
-        ...(relative.isEnableTypeScript
-          ? {
-              '@eslint-react/dom/no-unknown-property': 'off',
-            }
-          : {}),
-
+        '@eslint-react/dom/no-unknown-property': 'warn',
+        ...resolvedConfig.overrides,
       },
       settings: {
         'react-x': {
@@ -132,18 +148,14 @@ export default async function reactConfig(
           strict: true,
           skipImportCheck: true,
           polymorphicPropName: 'as',
-          additionalComponents: [
-          ],
+          additionalComponents: [],
           additionalHooks: {
-            useEffect: [
-              'useIsomorphicLayoutEffect',
-            ],
-            useLayoutEffect: [
-              'useIsomorphicLayoutEffect',
-            ],
+            useEffect: ['useIsomorphicLayoutEffect'],
+            useLayoutEffect: ['useIsomorphicLayoutEffect'],
           },
         },
       },
     },
+    ...typeScriptRules,
   ]
 }

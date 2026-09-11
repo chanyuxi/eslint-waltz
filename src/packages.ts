@@ -6,16 +6,16 @@ function importDefault<T = any>(moduleName: string): Promise<T> {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function importDefaultAs<T = any>(moduleName: string, cast: (d: any) => T): Promise<T> {
+function importDefaultAs<T = any>(
+  moduleName: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  cast: (d: any) => T,
+): Promise<T> {
   return import(moduleName).then(m => cast(m.default))
 }
 
 export function importGitignoreSeek() {
   return importDefault('eslint-config-flat-gitignore')
-}
-
-export function importGlobals() {
-  return importDefault('globals')
 }
 
 export function importTypeScriptPlugin() {
@@ -26,12 +26,24 @@ export function importTypeScriptParser() {
   return importDefaultAs('typescript-eslint', d => d.parser as Linter.Parser)
 }
 
+export function importTypeScriptRecommendedRules() {
+  return import('typescript-eslint').then(({ configs }) =>
+    Object.assign(
+      {},
+      ...configs.recommended.map(config => config.rules ?? {}),
+    ),
+  )
+}
+
 export function importStylisticPlugin() {
   return importDefault('@stylistic/eslint-plugin')
 }
 
 export function importJsoncPlugin() {
-  return importDefaultAs('eslint-plugin-jsonc', d => d as unknown as ESLint.Plugin)
+  return importDefaultAs(
+    'eslint-plugin-jsonc',
+    d => d as unknown as ESLint.Plugin,
+  )
 }
 
 export function importJsoncParser() {
@@ -43,25 +55,43 @@ export function importImportsPlugin() {
 }
 
 export function importReactPlugin() {
-  return importDefaultAs('eslint-plugin-react-x', d => d as unknown as ESLint.Plugin)
+  return importDefaultAs(
+    'eslint-plugin-react-x',
+    d => d as unknown as ESLint.Plugin,
+  )
 }
 
 export function importReactDebugPlugin() {
-  return importDefaultAs('eslint-plugin-react-debug', d => d as unknown as ESLint.Plugin)
+  return importDefaultAs(
+    'eslint-plugin-react-debug',
+    d => d as unknown as ESLint.Plugin,
+  )
 }
 
 export function importReactDomPlugin() {
-  return importDefaultAs('eslint-plugin-react-dom', d => d as unknown as ESLint.Plugin)
+  return importDefaultAs(
+    'eslint-plugin-react-dom',
+    d => d as unknown as ESLint.Plugin,
+  )
 }
 
 export function importReactHookExtraPlugin() {
-  return importDefaultAs('eslint-plugin-react-hooks-extra', d => d as unknown as ESLint.Plugin)
+  return importDefaultAs(
+    'eslint-plugin-react-hooks-extra',
+    d => d as unknown as ESLint.Plugin,
+  )
 }
 
 export function importReactNamingConventionPlugin() {
-  return importDefaultAs('eslint-plugin-react-naming-convention', d => d as unknown as ESLint.Plugin)
+  return importDefaultAs(
+    'eslint-plugin-react-naming-convention',
+    d => d as unknown as ESLint.Plugin,
+  )
 }
 
 export function importReactWebApiPlugin() {
-  return importDefaultAs('eslint-plugin-react-web-api', d => d as unknown as ESLint.Plugin)
+  return importDefaultAs(
+    'eslint-plugin-react-web-api',
+    d => d as unknown as ESLint.Plugin,
+  )
 }

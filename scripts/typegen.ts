@@ -30,8 +30,7 @@ const pluginImporters: Record<string, () => Promise<ESLint.Plugin>> = {
   '@eslint-react/naming-convention': importReactNamingConventionPlugin,
 }
 
-const plugins: Record<string, ESLint.Plugin> = {
-}
+const plugins: Record<string, ESLint.Plugin> = {}
 
 for (const [name, importer] of Object.entries(pluginImporters)) {
   plugins[name] = await importer()

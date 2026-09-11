@@ -12,16 +12,17 @@ export interface LinterConfig extends Omit<Linter.Config, 'rules'> {
 
 type Arraiable<T> = T | Array<T>
 
-export type UnresolvedLinterConfig = Arraiable<LinterConfig> | Promise<Arraiable<LinterConfig>>
+export type UnresolvedLinterConfig
+  = Arraiable<LinterConfig> | Promise<Arraiable<LinterConfig>>
 
-interface SharedOptions {
+export interface SharedOptions {
   /**
    * Each configuration automatically lints all corresponding files, this option is used to override
    */
   files?: Linter.Config['files']
   /**
    * Rewrite rules
-  */
+   */
   overrides?: LinterConfig['rules']
 }
 
@@ -32,6 +33,7 @@ export interface JsOptions extends SharedOptions {
 export type TsOptions = SharedOptions
 export type StylisticOptions = SharedOptions
 export type JsoncOptions = SharedOptions
+export type ImportsOptions = SharedOptions
 export type ReactOptions = SharedOptions
 
 export interface WaltzOptions {
@@ -63,13 +65,17 @@ export interface WaltzOptions {
    */
   stylistic?: StylisticOptions
   /**
+   * Enable JSON/JSONC rules
    *
+   * @default true
    */
   json?: boolean | JsoncOptions
   /**
+   * Enable import rules
    *
+   * @default false
    */
-  imports?: boolean
+  imports?: boolean | ImportsOptions
   /**
    * @default false
    */

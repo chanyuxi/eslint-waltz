@@ -1,21 +1,26 @@
 import { JSON_FILES } from '../constants'
 import { importJsoncParser, importJsoncPlugin } from '../packages'
 
-import type { LinterConfig } from '../types'
+import type { JsoncOptions, LinterConfig } from '../types'
 
-export default async function jsoncConfig(): Promise<LinterConfig[]> {
-  const [
-    jsoncPlugin,
-    jsoncParser,
-  ] = await Promise.all([
+export default async function jsoncConfig(
+  options: JsoncOptions = {},
+): Promise<LinterConfig[]> {
+  const [jsoncPlugin, jsoncParser] = await Promise.all([
     importJsoncPlugin(),
     importJsoncParser(),
   ] as const)
+  const files = options.files ?? [JSON_FILES]
+  const packageJsonFiles = options.files ?? ['**/package.json']
+  const tsconfigFiles = options.files ?? [
+    '**/[jt]sconfig.json',
+    '**/[jt]sconfig.*.json',
+  ]
 
   return [
     {
       name: 'waltz/jsonc/setup',
-      files: [JSON_FILES],
+      files,
       plugins: {
         jsonc: jsoncPlugin,
       },
@@ -25,7 +30,7 @@ export default async function jsoncConfig(): Promise<LinterConfig[]> {
     },
     {
       name: 'waltz/jsonc/rules',
-      files: [JSON_FILES],
+      files,
       rules: {
         'jsonc/comma-dangle': 'error',
         'jsonc/no-bigint-literals': 'error',
@@ -58,11 +63,13 @@ export default async function jsoncConfig(): Promise<LinterConfig[]> {
         'jsonc/vue-custom-block/no-parsing-error': 'error',
 
         'jsonc/indent': ['error', 2],
+
+        ...options.overrides,
       },
     },
     {
       name: 'waltz/jsonc/sort/package-json',
-      files: ['**/package.json'],
+      files: packageJsonFiles,
       rules: {
         'jsonc/sort-array-values': [
           'error',
@@ -129,22 +136,17 @@ export default async function jsoncConfig(): Promise<LinterConfig[]> {
             order: {
               type: 'asc',
             },
-            pathPattern: '^(?:dev|peer|optional|bundled)?[Dd]ependencies(Meta)?$',
+            pathPattern:
+              '^(?:dev|peer|optional|bundled)?[Dd]ependencies(Meta)?$',
           },
           {
             order: {
               type: 'asc',
-
             },
             pathPattern: '^(?:resolutions|overrides|pnpm.overrides)$',
           },
           {
-            order: [
-              'types',
-              'import',
-              'require',
-              'default',
-            ],
+            order: ['types', 'import', 'require', 'default'],
             pathPattern: '^exports.*$',
           },
           {
@@ -168,7 +170,7 @@ export default async function jsoncConfig(): Promise<LinterConfig[]> {
     },
     {
       name: 'waltz/jsonc/sort/tsconfig-json',
-      files: ['**/[jt]sconfig.json', '**/[jt]sconfig.*.json'],
+      files: tsconfigFiles,
       rules: {
         'jsonc/sort-keys': [
           'error',

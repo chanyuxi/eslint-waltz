@@ -1,22 +1,27 @@
-import { ALL_SCRIPTS_FILES, JS_FILES, TS_FILES } from '../constants'
+import { ALL_SCRIPTS_FILES, JS_FILES } from '../constants'
 import { importImportsPlugin } from '../packages'
 
-import type { LinterConfig } from '../types'
+import type { ImportsOptions, LinterConfig } from '../types'
 
-export default async function importsConfig(): Promise<LinterConfig[]> {
+export default async function importsConfig(
+  isEnableTypeScript = false,
+  options: ImportsOptions = {},
+): Promise<LinterConfig[]> {
   const importsPlugin = await importImportsPlugin()
+  const scriptFiles = isEnableTypeScript ? ALL_SCRIPTS_FILES : [JS_FILES]
+  const files = options.files ?? scriptFiles
 
   return [
     {
       name: 'waltz/imports/setup',
-      files: ALL_SCRIPTS_FILES,
+      files,
       plugins: {
         imports: importsPlugin,
       },
     },
     {
       name: 'waltz/imports/rules',
-      files: [JS_FILES, TS_FILES],
+      files,
       rules: {
         'imports/named': 'error',
         'imports/namespace': 'error',
@@ -27,46 +32,51 @@ export default async function importsConfig(): Promise<LinterConfig[]> {
         'imports/no-named-as-default-member': 'warn',
         'imports/no-duplicates': 'warn',
 
-        'imports/order': ['error', {
-          'groups': [
-            'builtin',
-            'external',
-            'parent',
-            'sibling',
-            'index',
-            'type',
-            ['object', 'unknown'],
-          ],
-          'pathGroups': [
-            {
-              pattern: '@/**',
-              group: 'internal',
-              position: 'before',
+        'imports/order': [
+          'error',
+          {
+            'groups': [
+              'builtin',
+              'external',
+              'parent',
+              'sibling',
+              'index',
+              'type',
+              ['object', 'unknown'],
+            ],
+            'pathGroups': [
+              {
+                pattern: '@/**',
+                group: 'internal',
+                position: 'before',
+              },
+              {
+                pattern: '*.{css,scss,less}',
+                group: 'unknown',
+                patternOptions: { matchBase: true },
+                position: 'after',
+              },
+              {
+                pattern: '*.{svg,png,jpg,gif,webp}',
+                group: 'unknown',
+                patternOptions: { matchBase: true },
+                position: 'after',
+              },
+            ],
+            'pathGroupsExcludedImportTypes': ['builtin'],
+            'newlines-between': 'always',
+            'alphabetize': {
+              order: 'asc',
+              caseInsensitive: true,
+              orderImportKind: 'asc',
             },
-            {
-              pattern: '*.{css,scss,less}',
-              group: 'unknown',
-              patternOptions: { matchBase: true },
-              position: 'after',
-            },
-            {
-              pattern: '*.{svg,png,jpg,gif,webp}',
-              group: 'unknown',
-              patternOptions: { matchBase: true },
-              position: 'after',
-            },
-          ],
-          'pathGroupsExcludedImportTypes': ['builtin'],
-          'newlines-between': 'always',
-          'alphabetize': {
-            order: 'asc',
-            caseInsensitive: true,
-            orderImportKind: 'asc',
+            'named': true,
+            'warnOnUnassignedImports': true,
+            'distinctGroup': false,
           },
-          'named': true,
-          'warnOnUnassignedImports': true,
-          'distinctGroup': false,
-        }],
+        ],
+
+        ...options.overrides,
       },
     },
   ]
