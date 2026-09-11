@@ -1,5 +1,11 @@
 # @chanyuxi/eslint-waltz
 
+## 0.1.1
+
+### Patch Changes
+
+- 0e053fc: We have adjusted the default for `import` to `true`.
+
 ## 0.1.0
 
 ### Minor Changes
