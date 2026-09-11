@@ -13,24 +13,25 @@ export default async function importsConfig(
 
   return [
     {
-      name: 'waltz/imports/setup',
       files,
+      name: 'waltz/imports/setup',
       plugins: {
         imports: importsPlugin,
       },
     },
     {
-      name: 'waltz/imports/rules',
       files,
+      name: 'waltz/imports/rules',
       rules: {
-        'imports/named': 'error',
-        'imports/namespace': 'error',
         'imports/default': 'error',
         'imports/export': 'error',
 
+        'imports/named': 'error',
+        'imports/namespace': 'error',
+
+        'imports/no-duplicates': 'warn',
         'imports/no-named-as-default': 'warn',
         'imports/no-named-as-default-member': 'warn',
-        'imports/no-duplicates': 'warn',
 
         'imports/order': [
           'error',

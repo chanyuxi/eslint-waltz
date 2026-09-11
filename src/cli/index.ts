@@ -4,14 +4,6 @@ import process from 'node:process'
 
 import { syncVSCodeSettings } from './vscode'
 
-function printHelp() {
-  console.log(`Usage: eslint-waltz <command>
-
-Commands:
-  sync-vscode  Create or update .vscode/settings.json for ESLint fix-on-save
-`)
-}
-
 async function main() {
   const [command] = process.argv.slice(2)
 
@@ -32,6 +24,14 @@ async function main() {
       ? `Updated ${result.filePath}`
       : `${result.filePath} is already synchronized`,
   )
+}
+
+function printHelp() {
+  console.log(`Usage: eslint-waltz <command>
+
+Commands:
+  sync-vscode  Create or update .vscode/settings.json for ESLint fix-on-save
+`)
 }
 
 main().catch((error) => {

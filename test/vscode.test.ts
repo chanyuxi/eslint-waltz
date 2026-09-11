@@ -48,7 +48,7 @@ test('syncs and preserves VS Code settings', async () => {
     assert.equal(second.changed, false)
   }
   finally {
-    await rm(cwd, { recursive: true, force: true })
+    await rm(cwd, { force: true, recursive: true })
   }
 })
 
@@ -61,14 +61,14 @@ test('creates missing VS Code settings', async () => {
 
     assert.equal(result.changed, true)
     assert.deepEqual(parse(source), {
-      'prettier.enable': false,
-      'editor.formatOnSave': false,
       'editor.codeActionsOnSave': {
         'source.fixAll.eslint': 'explicit',
       },
+      'editor.formatOnSave': false,
+      'prettier.enable': false,
     })
   }
   finally {
-    await rm(cwd, { recursive: true, force: true })
+    await rm(cwd, { force: true, recursive: true })
   }
 })

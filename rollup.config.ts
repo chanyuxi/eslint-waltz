@@ -25,8 +25,8 @@ const external = [
 
 export default defineConfig([
   {
-    input: 'src/index.ts',
     external,
+    input: 'src/index.ts',
     output: {
       file: 'dist/index.js',
       format: 'esm',
@@ -34,8 +34,8 @@ export default defineConfig([
     plugins: [nodeResolver(), commonjs(), typescript()],
   },
   {
-    input: 'src/cli/index.ts',
     external: [/^node:/],
+    input: 'src/cli/index.ts',
     output: {
       file: 'dist/cli.js',
       format: 'esm',

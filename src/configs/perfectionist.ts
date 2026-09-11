@@ -26,15 +26,15 @@ export default async function perfectionistConfig(
 
   return [
     {
-      name: 'waltz/perfectionist/setup',
       files: scriptFiles,
+      name: 'waltz/perfectionist/setup',
       plugins: {
         perfectionist,
       },
     },
     {
-      name: 'waltz/perfectionist/rules',
       files: options.files ?? scriptFiles,
+      name: 'waltz/perfectionist/rules',
       ...(options.settings ? { settings: options.settings } : {}),
       rules: {
         ...recommendedRules,

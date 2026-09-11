@@ -14,7 +14,6 @@ export default function jsConfig(
   relative: relativeOptions,
 ): LinterConfig {
   return {
-    name: 'waltz/js/rules',
     files: config.files ?? [JS_FILES],
     languageOptions: {
       globals: {
@@ -30,6 +29,7 @@ export default function jsConfig(
         },
       },
     },
+    name: 'waltz/js/rules',
     rules: {
       ...eslint.configs.recommended.rules,
       ...config.overrides,

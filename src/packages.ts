@@ -1,42 +1,15 @@
 import { ESLint, Linter } from 'eslint'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function importDefault<T = any>(moduleName: string): Promise<T> {
-  return import(moduleName).then(m => m.default)
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function importDefaultAs<T = any>(
-  moduleName: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  cast: (d: any) => T,
-): Promise<T> {
-  return import(moduleName).then(m => cast(m.default))
-}
-
 export function importGitignoreSeek() {
   return importDefault('eslint-config-flat-gitignore')
 }
 
-export function importTypeScriptPlugin() {
-  return importDefaultAs('typescript-eslint', d => d.plugin as ESLint.Plugin)
+export function importImportXPlugin() {
+  return importDefault('eslint-plugin-import-x')
 }
 
-export function importTypeScriptParser() {
-  return importDefaultAs('typescript-eslint', d => d.parser as Linter.Parser)
-}
-
-export function importTypeScriptRecommendedRules() {
-  return import('typescript-eslint').then(({ configs }) =>
-    Object.assign(
-      {},
-      ...configs.recommended.map(config => config.rules ?? {}),
-    ),
-  )
-}
-
-export function importStylisticPlugin() {
-  return importDefault('@stylistic/eslint-plugin')
+export function importJsoncParser() {
+  return import('jsonc-eslint-parser')
 }
 
 export function importJsoncPlugin() {
@@ -46,19 +19,8 @@ export function importJsoncPlugin() {
   )
 }
 
-export function importJsoncParser() {
-  return import('jsonc-eslint-parser')
-}
-
-export function importImportXPlugin() {
-  return importDefault('eslint-plugin-import-x')
-}
-
-export function importReactPlugin() {
-  return importDefaultAs(
-    'eslint-plugin-react-x',
-    d => d as unknown as ESLint.Plugin,
-  )
+export function importPerfectionistPlugin() {
+  return importDefault('eslint-plugin-perfectionist')
 }
 
 export function importReactDebugPlugin() {
@@ -89,6 +51,13 @@ export function importReactNamingConventionPlugin() {
   )
 }
 
+export function importReactPlugin() {
+  return importDefaultAs(
+    'eslint-plugin-react-x',
+    d => d as unknown as ESLint.Plugin,
+  )
+}
+
 export function importReactWebApiPlugin() {
   return importDefaultAs(
     'eslint-plugin-react-web-api',
@@ -96,10 +65,41 @@ export function importReactWebApiPlugin() {
   )
 }
 
+export function importStylisticPlugin() {
+  return importDefault('@stylistic/eslint-plugin')
+}
+
 export function importTailwindcssPlugin() {
   return importDefault('eslint-plugin-tailwindcss')
 }
 
-export function importPerfectionistPlugin() {
-  return importDefault('eslint-plugin-perfectionist')
+export function importTypeScriptParser() {
+  return importDefaultAs('typescript-eslint', d => d.parser as Linter.Parser)
+}
+
+export function importTypeScriptPlugin() {
+  return importDefaultAs('typescript-eslint', d => d.plugin as ESLint.Plugin)
+}
+
+export function importTypeScriptRecommendedRules() {
+  return import('typescript-eslint').then(({ configs }) =>
+    Object.assign(
+      {},
+      ...configs.recommended.map(config => config.rules ?? {}),
+    ),
+  )
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function importDefault<T = any>(moduleName: string): Promise<T> {
+  return import(moduleName).then(m => m.default)
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function importDefaultAs<T = any>(
+  moduleName: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  cast: (d: any) => T,
+): Promise<T> {
+  return import(moduleName).then(m => cast(m.default))
 }

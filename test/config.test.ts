@@ -140,8 +140,8 @@ test('React TypeScript exceptions do not disable rules for JavaScript', async ()
 
 test('TypeScript configuration parses TypeScript files', async () => {
   const eslint = new ESLint({
-    overrideConfigFile: true,
     overrideConfig: await waltz({ json: false, ts: true }),
+    overrideConfigFile: true,
   })
   const [result] = await eslint.lintText('var value: string = \'ok\'\n', {
     filePath: 'sample.ts',

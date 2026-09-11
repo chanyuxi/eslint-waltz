@@ -20,23 +20,23 @@ export default async function tailwindcssConfig(
 
   return [
     {
-      name: 'waltz/tailwindcss/setup',
       files,
+      languageOptions: recommended.languageOptions,
+      name: 'waltz/tailwindcss/setup',
       plugins: {
         tailwindcss,
       },
-      languageOptions: recommended.languageOptions,
     },
     {
-      name: 'waltz/tailwindcss/rules',
       files,
-      settings: {
-        ...recommended.settings,
-        ...options.settings,
-      },
+      name: 'waltz/tailwindcss/rules',
       rules: {
         ...recommended.rules,
         ...options.overrides,
+      },
+      settings: {
+        ...recommended.settings,
+        ...options.settings,
       },
     },
   ]

@@ -50,9 +50,9 @@ export async function syncVSCodeSettings(
 
   const eol = source.includes('\r\n') ? '\r\n' : '\n'
   const formattingOptions = {
+    eol,
     insertSpaces: true,
     tabSize: 2,
-    eol,
   }
 
   for (const setting of managedSettings) {

@@ -88,15 +88,15 @@ export default async function stylisticConfig(
 
   return [
     {
-      name: 'waltz/stylistic/setup',
       files: scriptFiles,
+      name: 'waltz/stylistic/setup',
       plugins: {
         '@stylistic': eslintStylistic,
       },
     },
     {
-      name: 'waltz/stylistic/rules',
       files: options.files ?? scriptFiles,
+      name: 'waltz/stylistic/rules',
       rules: {
         ...configs.rules,
         ...options.overrides,

@@ -21,18 +21,18 @@ export default async function tsConfig(
 
   return [
     {
-      name: 'waltz/ts/setup',
       files: [TS_FILES],
-      plugins: {
-        '@typescript-eslint': typeScriptPlugin,
-      },
       languageOptions: {
         parser: typeScriptParser,
       },
+      name: 'waltz/ts/setup',
+      plugins: {
+        '@typescript-eslint': typeScriptPlugin,
+      },
     },
     {
-      name: 'waltz/ts/rules',
       files: resolvedConfig.files ?? [TS_FILES],
+      name: 'waltz/ts/rules',
       rules: {
         ...recommendedRules,
         ...resolvedConfig.overrides,
