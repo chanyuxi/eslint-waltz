@@ -1,12 +1,20 @@
 # @chanyuxi/eslint-waltz
 
-## 1.1.0 [2026-09-11]
+## 1.1.1
+
+### Patch Changes
+
+- Use the `recommended-alphabetical` Perfectionist preset by default and avoid duplicate import sorting when Perfectionist is enabled.
+- Prevent sorting-rule conflicts across custom file scopes and keep JSON special-file sorting isolated from general JSON configuration.
+- Remove commit hashes from generated changelog entries.
+
+## 1.1.0
 
 ### Minor Changes
 
 - Enable **recommended-alphabetical** by default
 
-## 1.0.0 [2026-09-11]
+## 1.0.0
 
 ### Major Changes
 
@@ -17,19 +25,19 @@
 
 - Add support for Tailwind CSS.
 
-## 0.1.1 [2026-09-11]
+## 0.1.1
 
 ### Patch Changes
 
 - We have adjusted the default for `import` to `true`.
 
-## 0.1.0 [2026-09-11]
+## 0.1.0
 
 ### Minor Changes
 
 - Add the `eslint-waltz sync-vscode` CLI command for synchronizing ESLint fix-on-save settings.
 
-## 0.0.0 [2026-09-11]
+## 0.0.0
 
 ### Minor Changes
 
