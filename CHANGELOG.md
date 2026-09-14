@@ -1,5 +1,17 @@
 # @chanyuxi/eslint-waltz
 
+## 1.2.0
+
+### Minor Changes
+
+- Add optional Vitest ESLint rules and migrate the project test suite to Vitest.
+
+### Patch Changes
+
+- Align type documentation and changelog wording with the current configuration behavior.
+- Simplify the README to focus on installation and basic configuration.
+- Bundle the runtime dependencies required by the always-enabled JavaScript and stylistic configurations.
+
 ## 1.1.1
 
 ### Changed
