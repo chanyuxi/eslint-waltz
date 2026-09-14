@@ -1,7 +1,6 @@
+import { ESLint } from 'eslint'
 import assert from 'node:assert/strict'
 import test from 'node:test'
-
-import { ESLint } from 'eslint'
 
 import waltz from '../src'
 import { JS_FILES, TS_FILES } from '../src/constants'
@@ -32,6 +31,22 @@ test('json can be disabled and configured', async () => {
 
   assert.deepEqual(jsonRules?.files, ['config/**/*.json'])
   assert.equal(jsonRules?.rules?.['jsonc/quotes'], 'off')
+
+  const jsonSetup = configByName(configured, 'waltz/jsonc/setup')
+  assert.deepEqual(jsonSetup?.files, [
+    'config/**/*.json',
+    '**/package.json',
+    '**/[jt]sconfig.json',
+    '**/[jt]sconfig.*.json',
+  ])
+  assert.deepEqual(
+    configByName(configured, 'waltz/jsonc/sort/package-json')?.files,
+    ['**/package.json'],
+  )
+  assert.deepEqual(
+    configByName(configured, 'waltz/jsonc/sort/tsconfig-json')?.files,
+    ['**/[jt]sconfig.json', '**/[jt]sconfig.*.json'],
+  )
 })
 
 test('script-only features do not match TypeScript unless enabled', async () => {
@@ -53,21 +68,68 @@ test('script-only features do not match TypeScript unless enabled', async () => 
 test('imports are enabled by default and can be disabled', async () => {
   const defaults = await waltz()
   const setup = configByName(defaults, 'waltz/imports/setup')
+  const defaultRules = configByName(defaults, 'waltz/imports/rules')
 
   assert.equal(setup?.plugins?.imports !== undefined, true)
   assert.notEqual(setup, undefined)
+  assert.equal(defaultRules?.rules?.['imports/order'], undefined)
+
+  const defaultEslint = new ESLint({
+    overrideConfig: defaults,
+    overrideConfigFile: true,
+  })
+  const defaultFileConfig = await defaultEslint.calculateConfigForFile(
+    'src/example.js',
+  )
+  assert.equal(defaultFileConfig?.rules?.['imports/order'], undefined)
 
   const disabled = await waltz({ imports: false })
   assert.equal(configByName(disabled, 'waltz/imports/setup'), undefined)
+
+  const withoutPerfectionist = await waltz({ perfectionist: false })
+  const withoutPerfectionistEslint = new ESLint({
+    overrideConfig: withoutPerfectionist,
+    overrideConfigFile: true,
+  })
+  const withoutPerfectionistFileConfig
+    = await withoutPerfectionistEslint.calculateConfigForFile(
+      'src/example.js',
+    )
+  assert.notEqual(
+    withoutPerfectionistFileConfig?.rules?.['imports/order'],
+    undefined,
+  )
 })
 
-test('Perfectionist replaces the deprecated JSX prop sorting rule', async () => {
+test('sorting rules respect custom file scopes', async () => {
+  const configs = await waltz({
+    imports: { files: ['scripts/**/*.ts'] },
+    perfectionist: { files: ['src/**/*.ts'] },
+    ts: true,
+  })
+  const eslint = new ESLint({
+    overrideConfig: configs,
+    overrideConfigFile: true,
+  })
+  const sourceConfig = await eslint.calculateConfigForFile('src/example.ts')
+  const scriptConfig = await eslint.calculateConfigForFile(
+    'scripts/example.ts',
+  )
+
+  assert.notEqual(sourceConfig?.rules?.['perfectionist/sort-imports'], undefined)
+  assert.equal(sourceConfig?.rules?.['imports/order'], undefined)
+  assert.notEqual(scriptConfig?.rules?.['imports/order'], undefined)
+  assert.equal(scriptConfig?.rules?.['perfectionist/sort-imports'], undefined)
+})
+
+test('Perfectionist uses recommended-alphabetical by default', async () => {
   const configs = await waltz()
   const setup = configByName(configs, 'waltz/perfectionist/setup')
   const rules = configByName(configs, 'waltz/perfectionist/rules')
 
   assert.equal(setup?.plugins?.perfectionist !== undefined, true)
-  assert.equal(rules?.rules?.['perfectionist/sort-jsx-props'], 'error')
+  assert.notEqual(rules?.rules?.['perfectionist/sort-objects'], undefined)
+  assert.notEqual(rules?.rules?.['perfectionist/sort-jsx-props'], undefined)
   assert.equal(rules?.rules?.['@stylistic/jsx-sort-props'], undefined)
 })
 

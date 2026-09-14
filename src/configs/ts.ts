@@ -1,11 +1,11 @@
+import type { LinterConfig, TsOptions } from '../types'
+
 import { TS_FILES } from '../constants'
 import {
   importTypeScriptParser,
   importTypeScriptPlugin,
   importTypeScriptRecommendedRules,
 } from '../packages'
-
-import type { LinterConfig, TsOptions } from '../types'
 
 export default async function tsConfig(
   options: boolean | TsOptions = {},
@@ -18,10 +18,11 @@ export default async function tsConfig(
     ] as const)
 
   const resolvedConfig: TsOptions = typeof options === 'boolean' ? {} : options
+  const ruleFiles = resolvedConfig.files ?? [TS_FILES]
 
   return [
     {
-      files: [TS_FILES],
+      files: ruleFiles,
       languageOptions: {
         parser: typeScriptParser,
       },
@@ -31,7 +32,7 @@ export default async function tsConfig(
       },
     },
     {
-      files: resolvedConfig.files ?? [TS_FILES],
+      files: ruleFiles,
       name: 'waltz/ts/rules',
       rules: {
         ...recommendedRules,

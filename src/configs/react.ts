@@ -1,3 +1,5 @@
+import type { LinterConfig, ReactOptions } from '../types'
+
 import { ALL_SCRIPTS_FILES, JS_FILES, TS_FILES } from '../constants'
 import {
   importReactDebugPlugin,
@@ -7,8 +9,6 @@ import {
   importReactPlugin,
   importReactWebApiPlugin,
 } from '../packages'
-
-import type { LinterConfig, ReactOptions } from '../types'
 
 interface relativeOptions {
   isEnableTypeScript: boolean
@@ -40,10 +40,15 @@ export default async function reactConfig(
     ? ALL_SCRIPTS_FILES
     : [JS_FILES]
   const ruleFiles = resolvedConfig.files ?? scriptFiles
+  const setupFiles = relative.isEnableTypeScript && resolvedConfig.files
+    ? [...resolvedConfig.files, TS_FILES]
+    : relative.isEnableTypeScript
+      ? scriptFiles
+      : ruleFiles
   const typeScriptRules: LinterConfig[] = relative.isEnableTypeScript
     ? [
         {
-          files: resolvedConfig.files ?? [TS_FILES],
+          files: [TS_FILES],
           name: 'waltz/react/typescript-rules',
           rules: {
             '@eslint-react/dom/no-unknown-property': 'off',
@@ -55,7 +60,7 @@ export default async function reactConfig(
 
   return [
     {
-      files: scriptFiles,
+      files: setupFiles,
       name: 'waltz/react/setup',
       plugins: {
         '@eslint-react': reactPlugin,

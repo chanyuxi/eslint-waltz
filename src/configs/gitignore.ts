@@ -1,7 +1,8 @@
-import { importGitignoreSeek } from '../packages'
+import type { FlatGitignoreOptions } from 'eslint-config-flat-gitignore'
 
 import type { LinterConfig } from '../types'
-import type { FlatGitignoreOptions } from 'eslint-config-flat-gitignore'
+
+import { importGitignoreSeek } from '../packages'
 
 export default async function gitignore(
   enable: boolean | FlatGitignoreOptions,

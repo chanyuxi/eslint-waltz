@@ -1,6 +1,7 @@
-import fs from 'node:fs/promises'
+import type { ESLint } from 'eslint'
 
 import { pluginsToRulesDTS } from 'eslint-typegen/core'
+import fs from 'node:fs/promises'
 
 import {
   importImportXPlugin,
@@ -16,8 +17,6 @@ import {
   importTailwindcssPlugin,
   importTypeScriptPlugin,
 } from '../src/packages'
-
-import type { ESLint } from 'eslint'
 
 const pluginImporters: Record<string, () => Promise<ESLint.Plugin>> = {
   '@eslint-react': importReactPlugin,

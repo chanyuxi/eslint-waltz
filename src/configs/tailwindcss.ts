@@ -1,7 +1,7 @@
+import type { LinterConfig, TailwindcssOptions } from '../types'
+
 import { ALL_SCRIPTS_FILES, JS_FILES } from '../constants'
 import { importTailwindcssPlugin } from '../packages'
-
-import type { LinterConfig, TailwindcssOptions } from '../types'
 
 interface RelativeOptions {
   isEnableTypeScript: boolean

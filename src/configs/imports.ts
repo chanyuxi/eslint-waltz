@@ -1,15 +1,70 @@
+import type { ImportsOptions, LinterConfig } from '../types'
+
 import { ALL_SCRIPTS_FILES, JS_FILES } from '../constants'
 import { importImportXPlugin } from '../packages'
 
-import type { ImportsOptions, LinterConfig } from '../types'
+interface RelativeOptions {
+  perfectionistFiles?: LinterConfig['ignores']
+}
 
 export default async function importsConfig(
   isEnableTypeScript = false,
   options: ImportsOptions = {},
+  relative: RelativeOptions = {},
 ): Promise<LinterConfig[]> {
   const importsPlugin = await importImportXPlugin()
   const scriptFiles = isEnableTypeScript ? ALL_SCRIPTS_FILES : [JS_FILES]
   const files = options.files ?? scriptFiles
+  const {
+    'imports/order': orderOverride,
+    ...overrides
+  } = options.overrides ?? {}
+
+  const orderRules: LinterConfig['rules'] = {
+    'imports/order': orderOverride ?? [
+      'error',
+      {
+        'alphabetize': {
+          caseInsensitive: true,
+          order: 'asc',
+          orderImportKind: 'asc',
+        },
+        'distinctGroup': false,
+        'groups': [
+          'builtin',
+          'external',
+          'parent',
+          'sibling',
+          'index',
+          'type',
+          ['object', 'unknown'],
+        ],
+        'named': true,
+        'newlines-between': 'always',
+        'pathGroups': [
+          {
+            group: 'internal',
+            pattern: '@/**',
+            position: 'before',
+          },
+          {
+            group: 'unknown',
+            pattern: '*.{css,scss,less}',
+            patternOptions: { matchBase: true },
+            position: 'after',
+          },
+          {
+            group: 'unknown',
+            pattern: '*.{svg,png,jpg,gif,webp}',
+            patternOptions: { matchBase: true },
+            position: 'after',
+          },
+        ],
+        'pathGroupsExcludedImportTypes': ['builtin'],
+        'warnOnUnassignedImports': true,
+      },
+    ],
+  }
 
   return [
     {
@@ -33,52 +88,16 @@ export default async function importsConfig(
         'imports/no-named-as-default': 'warn',
         'imports/no-named-as-default-member': 'warn',
 
-        'imports/order': [
-          'error',
-          {
-            'groups': [
-              'builtin',
-              'external',
-              'parent',
-              'sibling',
-              'index',
-              'type',
-              ['object', 'unknown'],
-            ],
-            'pathGroups': [
-              {
-                pattern: '@/**',
-                group: 'internal',
-                position: 'before',
-              },
-              {
-                pattern: '*.{css,scss,less}',
-                group: 'unknown',
-                patternOptions: { matchBase: true },
-                position: 'after',
-              },
-              {
-                pattern: '*.{svg,png,jpg,gif,webp}',
-                group: 'unknown',
-                patternOptions: { matchBase: true },
-                position: 'after',
-              },
-            ],
-            'pathGroupsExcludedImportTypes': ['builtin'],
-            'newlines-between': 'always',
-            'alphabetize': {
-              order: 'asc',
-              caseInsensitive: true,
-              orderImportKind: 'asc',
-            },
-            'named': true,
-            'warnOnUnassignedImports': true,
-            'distinctGroup': false,
-          },
-        ],
-
-        ...options.overrides,
+        ...overrides,
       },
+    },
+    {
+      files,
+      ...(relative.perfectionistFiles
+        ? { ignores: relative.perfectionistFiles }
+        : {}),
+      name: 'waltz/imports/order',
+      rules: orderRules,
     },
   ]
 }

@@ -19,7 +19,7 @@ The following configuration modules are available:
 - JSONC and imports are enabled by default and can be disabled with `json: false` and `imports: false`.
 - TypeScript, React, Tailwind CSS, and gitignore support are opt-in.
 
-The `stylistic` configuration is always enabled. Perfectionist is enabled by default with JSX prop sorting.
+The `stylistic` configuration is always enabled. Perfectionist is enabled by default with the `recommended-alphabetical` preset.
 
 # Usage
 
@@ -33,7 +33,7 @@ pnpm add -D @chanyuxi/eslint-waltz eslint @eslint/js @stylistic/eslint-plugin es
 
 Install the peer packages for any optional modules you enable, such as `typescript-eslint`, `eslint-plugin-tailwindcss`, `tailwindcss`, or the React ESLint plugins.
 
-Perfectionist's `sort-jsx-props` rule is enabled by default for JSX props. Use `perfectionist: { preset: 'recommended-alphabetical' }` to enable its full recommended preset. ESLint 10 and the current integrations require Node.js `>=20.19.0`.
+Perfectionist uses the `recommended-alphabetical` preset by default. Use `perfectionist: { preset: 'recommended-custom' }`, `recommended-line-length`, or `recommended-natural` to select another recommended preset. ESLint 10 and the current integrations require Node.js `>=20.19.0`.
 
 Tailwind CSS support targets `eslint-plugin-tailwindcss` 4.x and Tailwind CSS 4.x. Node.js `>=20.19.0` is required when the Tailwind CSS module is enabled.
 

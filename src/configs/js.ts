@@ -1,9 +1,9 @@
 import eslint from '@eslint/js'
 import globals from 'globals'
 
-import { JS_FILES } from '../constants'
-
 import type { JsOptions, LinterConfig } from '../types'
+
+import { JS_FILES } from '../constants'
 
 interface relativeOptions {
   isEnableReact: boolean

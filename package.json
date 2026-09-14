@@ -42,13 +42,14 @@
   "scripts": {
     "build": "rimraf ./dist && pnpm gen && rollup -c rollup.config.ts --configPlugin @rollup/plugin-typescript",
     "gen": "tsx scripts/typegen.ts",
+    "formatChangelog": "tsx scripts/format-changelog.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typeCheck": "pnpm gen && tsc --noEmit",
     "test": "node --import tsx test/index.ts",
     "check": "pnpm run typeCheck && pnpm run lint && pnpm run test",
     "changeset": "changeset",
-    "version": "changeset version && pnpm install --lockfile-only",
+    "version": "changeset version && pnpm formatChangelog && pnpm install --lockfile-only",
     "release": "pnpm build && changeset publish",
     "prepack": "pnpm build",
     "prepare": "husky"

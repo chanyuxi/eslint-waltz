@@ -1,7 +1,7 @@
+import type { JsoncOptions, LinterConfig } from '../types'
+
 import { JSON_FILES } from '../constants'
 import { importJsoncParser, importJsoncPlugin } from '../packages'
-
-import type { JsoncOptions, LinterConfig } from '../types'
 
 export default async function jsoncConfig(
   options: JsoncOptions = {},
@@ -11,15 +11,18 @@ export default async function jsoncConfig(
     importJsoncParser(),
   ] as const)
   const files = options.files ?? [JSON_FILES]
-  const packageJsonFiles = options.files ?? ['**/package.json']
-  const tsconfigFiles = options.files ?? [
+  const packageJsonFiles = ['**/package.json']
+  const tsconfigFiles = [
     '**/[jt]sconfig.json',
     '**/[jt]sconfig.*.json',
   ]
+  const setupFiles = options.files
+    ? [...options.files, ...packageJsonFiles, ...tsconfigFiles]
+    : files
 
   return [
     {
-      files,
+      files: setupFiles,
       languageOptions: {
         parser: jsoncParser,
       },

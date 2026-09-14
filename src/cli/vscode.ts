@@ -1,9 +1,8 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
-import { join } from 'node:path'
+import type { ParseError } from 'jsonc-parser'
 
 import { applyEdits, modify, parse } from 'jsonc-parser'
-
-import type { ParseError } from 'jsonc-parser'
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { join } from 'node:path'
 
 const managedSettings = [
   { path: ['prettier.enable'], value: false },

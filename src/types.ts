@@ -1,9 +1,10 @@
-import globals from 'globals'
-
-import type { RuleOptions } from './typegen'
 import type { Linter } from 'eslint'
 import type { FlatGitignoreOptions } from 'eslint-config-flat-gitignore'
 import type { PluginSettings } from 'eslint-plugin-tailwindcss'
+
+import globals from 'globals'
+
+import type { RuleOptions } from './typegen'
 
 export type ImportsOptions = SharedOptions
 
@@ -27,8 +28,8 @@ export interface PerfectionistOptions extends SharedOptions {
   /**
    * Select one of Perfectionist's full recommended presets.
    *
-   * Without a preset, only `perfectionist/sort-jsx-props` is enabled by
-   * default. A preset enables all of the plugin's sorting rules.
+   * Without a preset, the `recommended-alphabetical` preset is enabled by
+   * default. A preset selects one of the plugin's recommended presets.
    */
   preset?: PerfectionistPreset
   /**
@@ -92,7 +93,8 @@ export interface WaltzOptions {
    */
   gitignore?: boolean | FlatGitignoreOptions
   /**
-   * Enable rules for validating and ordering imports and exports.
+   * Enable rules for validating imports and exports. Import ordering is
+   * provided by Perfectionist when enabled, and by `imports/order` otherwise.
    *
    * This configuration is enabled by default. JavaScript files are included
    * by default, and the scope also includes TypeScript files when `ts` is
@@ -118,8 +120,9 @@ export interface WaltzOptions {
    * Enable linting for JSON, JSON5, and JSONC files.
    *
    * The default configuration also sorts keys in `package.json` and
-   * TypeScript configuration files. Pass an options object to change the file
-   * scope or override rules.
+   * TypeScript configuration files. Passing `files` changes the scope of the
+   * general JSON rules; the specialized file sorting remains targeted to
+   * those file names.
    *
    * @default true
    * @see https://github.com/ota-meshi/eslint-plugin-jsonc
@@ -128,9 +131,9 @@ export interface WaltzOptions {
   /**
    * Configure Perfectionist sorting rules.
    *
-   * This configuration is enabled by default with
-   * `perfectionist/sort-jsx-props`. Set it to `false` to disable it, or pass
-   * a `preset` to enable one of the full recommended configurations.
+   * This configuration is enabled by default with the
+   * `recommended-alphabetical` preset. Set it to `false` to disable it, or
+   * pass a `preset` to select one of the recommended configurations.
    *
    * @default true
    * @see https://perfectionist.dev/configs

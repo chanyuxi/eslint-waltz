@@ -1,3 +1,9 @@
+import type {
+  LinterConfig,
+  UnresolvedLinterConfig,
+  WaltzOptions,
+} from './types'
+
 import {
   gitignoreConfig,
   importsConfig,
@@ -9,12 +15,7 @@ import {
   tailwindcssConfig,
   tsConfig,
 } from './configs'
-
-import type {
-  LinterConfig,
-  UnresolvedLinterConfig,
-  WaltzOptions,
-} from './types'
+import { ALL_SCRIPTS_FILES, JS_FILES } from './constants'
 
 async function waltz(
   options: WaltzOptions = {},
@@ -22,6 +23,21 @@ async function waltz(
 ): Promise<LinterConfig[]> {
   const isEnableTypeScript = !!options.ts
   const isEnableReact = !!options.react
+  const isEnablePerfectionist = options.perfectionist !== false
+
+  const scriptFiles = isEnableTypeScript ? ALL_SCRIPTS_FILES : [JS_FILES]
+  const configuredPerfectionistFiles
+    = typeof options.perfectionist === 'object'
+      ? options.perfectionist.files
+      : undefined
+
+  const hasSimplePerfectionistFiles
+    = configuredPerfectionistFiles?.every(file => typeof file === 'string')
+  const perfectionistFiles = isEnablePerfectionist
+    ? hasSimplePerfectionistFiles
+      ? configuredPerfectionistFiles as string[]
+      : scriptFiles
+    : undefined
 
   const configs: UnresolvedLinterConfig[] = []
 
@@ -58,6 +74,9 @@ async function waltz(
         options.imports === true || options.imports === undefined
           ? {}
           : options.imports,
+        {
+          perfectionistFiles,
+        },
       ),
     )
   }

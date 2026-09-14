@@ -1,7 +1,7 @@
+import type { LinterConfig, StylisticOptions } from '../types'
+
 import { ALL_SCRIPTS_FILES, JS_FILES } from '../constants'
 import { importStylisticPlugin } from '../packages'
-
-import type { LinterConfig, StylisticOptions } from '../types'
 
 interface RelativeOptions {
   isEnableTypeScript: boolean
@@ -15,6 +15,7 @@ export default async function stylisticConfig(
   const scriptFiles = relative.isEnableTypeScript
     ? ALL_SCRIPTS_FILES
     : [JS_FILES]
+  const ruleFiles = options.files ?? scriptFiles
 
   // Directly use the generated recommendation rules
   const configs = eslintStylistic.configs.customize()
@@ -88,14 +89,14 @@ export default async function stylisticConfig(
 
   return [
     {
-      files: scriptFiles,
+      files: ruleFiles,
       name: 'waltz/stylistic/setup',
       plugins: {
         '@stylistic': eslintStylistic,
       },
     },
     {
-      files: options.files ?? scriptFiles,
+      files: ruleFiles,
       name: 'waltz/stylistic/rules',
       rules: {
         ...configs.rules,

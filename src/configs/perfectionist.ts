@@ -1,10 +1,10 @@
-import { ALL_SCRIPTS_FILES, JS_FILES } from '../constants'
-import { importPerfectionistPlugin } from '../packages'
-
 import type {
   LinterConfig,
   PerfectionistOptions,
 } from '../types'
+
+import { ALL_SCRIPTS_FILES, JS_FILES } from '../constants'
+import { importPerfectionistPlugin } from '../packages'
 
 interface RelativeOptions {
   isEnableTypeScript: boolean
@@ -18,22 +18,20 @@ export default async function perfectionistConfig(
   const scriptFiles = relative.isEnableTypeScript
     ? ALL_SCRIPTS_FILES
     : [JS_FILES]
-  const recommendedRules = options.preset
-    ? perfectionist.configs[options.preset].rules ?? {}
-    : {
-        'perfectionist/sort-jsx-props': 'error',
-      }
+  const ruleFiles = options.files ?? scriptFiles
+  const preset = options.preset ?? 'recommended-alphabetical'
+  const recommendedRules = perfectionist.configs[preset].rules ?? {}
 
   return [
     {
-      files: scriptFiles,
+      files: ruleFiles,
       name: 'waltz/perfectionist/setup',
       plugins: {
         perfectionist,
       },
     },
     {
-      files: options.files ?? scriptFiles,
+      files: ruleFiles,
       name: 'waltz/perfectionist/rules',
       ...(options.settings ? { settings: options.settings } : {}),
       rules: {
