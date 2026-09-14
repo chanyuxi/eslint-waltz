@@ -1,1 +1,3 @@
-Whenever a task introduces a staged change, add a corresponding changeset.
+- Edit this file in English.
+- Whenever a task introduces a staged change, add a corresponding changeset.
+- Each changeset message should be kept under 120 characters.

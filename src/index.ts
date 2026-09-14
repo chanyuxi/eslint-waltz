@@ -14,6 +14,7 @@ import {
   stylisticConfig,
   tailwindcssConfig,
   tsConfig,
+  vitestConfig,
 } from './configs'
 import { ALL_SCRIPTS_FILES, JS_FILES } from './constants'
 
@@ -113,6 +114,17 @@ async function waltz(
     )
   }
 
+  if (options.vitest) {
+    configs.push(
+      vitestConfig(
+        options.vitest === true ? {} : options.vitest,
+        {
+          isEnableTypeScript,
+        },
+      ),
+    )
+  }
+
   const resolvedConfigs = (await Promise.all(configs)).flat()
 
   return [...resolvedConfigs, ...orders]
@@ -131,6 +143,7 @@ export type {
   TailwindcssOptions,
   TsOptions,
   UnresolvedLinterConfig,
+  VitestOptions,
   WaltzOptions,
 } from './types'
 

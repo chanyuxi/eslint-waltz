@@ -90,6 +90,10 @@ export function importTypeScriptRecommendedRules() {
   )
 }
 
+export function importVitestPlugin() {
+  return import('@vitest/eslint-plugin').then(module => module.default)
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function importDefault<T = any>(moduleName: string): Promise<T> {
   return import(moduleName).then(m => m.default)

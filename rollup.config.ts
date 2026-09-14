@@ -20,6 +20,7 @@ const external = [
   'eslint-plugin-react-naming-convention',
   'eslint-plugin-react-web-api',
   'eslint-plugin-tailwindcss',
+  '@vitest/eslint-plugin',
   'globals',
 ]
 

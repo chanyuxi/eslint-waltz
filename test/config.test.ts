@@ -1,9 +1,13 @@
 import { ESLint } from 'eslint'
-import assert from 'node:assert/strict'
-import test from 'node:test'
+import { expect, test } from 'vitest'
 
 import waltz from '../src'
-import { JS_FILES, TS_FILES } from '../src/constants'
+import {
+  JS_FILES,
+  TS_FILES,
+  VITEST_JS_FILES,
+  VITEST_TS_FILES,
+} from '../src/constants'
 
 function configByName(
   configs: Awaited<ReturnType<typeof waltz>>,
@@ -14,10 +18,10 @@ function configByName(
 
 test('json can be disabled and configured', async () => {
   const defaults = await waltz()
-  assert.notEqual(configByName(defaults, 'waltz/jsonc/setup'), undefined)
+  expect(configByName(defaults, 'waltz/jsonc/setup')).not.toBeUndefined()
 
   const disabled = await waltz({ json: false })
-  assert.equal(configByName(disabled, 'waltz/jsonc/setup'), undefined)
+  expect(configByName(disabled, 'waltz/jsonc/setup')).toBeUndefined()
 
   const configured = await waltz({
     json: {
@@ -29,24 +33,22 @@ test('json can be disabled and configured', async () => {
   })
   const jsonRules = configByName(configured, 'waltz/jsonc/rules')
 
-  assert.deepEqual(jsonRules?.files, ['config/**/*.json'])
-  assert.equal(jsonRules?.rules?.['jsonc/quotes'], 'off')
+  expect(jsonRules?.files).toEqual(['config/**/*.json'])
+  expect(jsonRules?.rules?.['jsonc/quotes']).toBe('off')
 
   const jsonSetup = configByName(configured, 'waltz/jsonc/setup')
-  assert.deepEqual(jsonSetup?.files, [
+  expect(jsonSetup?.files).toEqual([
     'config/**/*.json',
     '**/package.json',
     '**/[jt]sconfig.json',
     '**/[jt]sconfig.*.json',
   ])
-  assert.deepEqual(
+  expect(
     configByName(configured, 'waltz/jsonc/sort/package-json')?.files,
-    ['**/package.json'],
-  )
-  assert.deepEqual(
+  ).toEqual(['**/package.json'])
+  expect(
     configByName(configured, 'waltz/jsonc/sort/tsconfig-json')?.files,
-    ['**/[jt]sconfig.json', '**/[jt]sconfig.*.json'],
-  )
+  ).toEqual(['**/[jt]sconfig.json', '**/[jt]sconfig.*.json'])
 })
 
 test('script-only features do not match TypeScript unless enabled', async () => {
@@ -55,14 +57,14 @@ test('script-only features do not match TypeScript unless enabled', async () => 
     javascriptOnly,
     'waltz/imports/rules',
   )
-  assert.deepEqual(javascriptImportRules?.files, [JS_FILES])
+  expect(javascriptImportRules?.files).toEqual([JS_FILES])
 
   const withTypeScript = await waltz({ ts: true })
   const typescriptImportRules = configByName(
     withTypeScript,
     'waltz/imports/rules',
   )
-  assert.deepEqual(typescriptImportRules?.files, [JS_FILES, TS_FILES])
+  expect(typescriptImportRules?.files).toEqual([JS_FILES, TS_FILES])
 })
 
 test('imports are enabled by default and can be disabled', async () => {
@@ -70,9 +72,9 @@ test('imports are enabled by default and can be disabled', async () => {
   const setup = configByName(defaults, 'waltz/imports/setup')
   const defaultRules = configByName(defaults, 'waltz/imports/rules')
 
-  assert.equal(setup?.plugins?.imports !== undefined, true)
-  assert.notEqual(setup, undefined)
-  assert.equal(defaultRules?.rules?.['imports/order'], undefined)
+  expect(setup?.plugins?.imports).toBeDefined()
+  expect(setup).toBeDefined()
+  expect(defaultRules?.rules?.['imports/order']).toBeUndefined()
 
   const defaultEslint = new ESLint({
     overrideConfig: defaults,
@@ -81,10 +83,10 @@ test('imports are enabled by default and can be disabled', async () => {
   const defaultFileConfig = await defaultEslint.calculateConfigForFile(
     'src/example.js',
   )
-  assert.equal(defaultFileConfig?.rules?.['imports/order'], undefined)
+  expect(defaultFileConfig?.rules?.['imports/order']).toBeUndefined()
 
   const disabled = await waltz({ imports: false })
-  assert.equal(configByName(disabled, 'waltz/imports/setup'), undefined)
+  expect(configByName(disabled, 'waltz/imports/setup')).toBeUndefined()
 
   const withoutPerfectionist = await waltz({ perfectionist: false })
   const withoutPerfectionistEslint = new ESLint({
@@ -95,10 +97,9 @@ test('imports are enabled by default and can be disabled', async () => {
     = await withoutPerfectionistEslint.calculateConfigForFile(
       'src/example.js',
     )
-  assert.notEqual(
+  expect(
     withoutPerfectionistFileConfig?.rules?.['imports/order'],
-    undefined,
-  )
+  ).toBeDefined()
 })
 
 test('sorting rules respect custom file scopes', async () => {
@@ -116,10 +117,30 @@ test('sorting rules respect custom file scopes', async () => {
     'scripts/example.ts',
   )
 
-  assert.notEqual(sourceConfig?.rules?.['perfectionist/sort-imports'], undefined)
-  assert.equal(sourceConfig?.rules?.['imports/order'], undefined)
-  assert.notEqual(scriptConfig?.rules?.['imports/order'], undefined)
-  assert.equal(scriptConfig?.rules?.['perfectionist/sort-imports'], undefined)
+  expect(sourceConfig?.rules?.['perfectionist/sort-imports']).toBeDefined()
+  expect(sourceConfig?.rules?.['imports/order']).toBeUndefined()
+  expect(scriptConfig?.rules?.['imports/order']).toBeDefined()
+  expect(scriptConfig?.rules?.['perfectionist/sort-imports']).toBeUndefined()
+})
+
+test('Vitest rules can be enabled for test files', async () => {
+  const defaults = await waltz()
+  expect(configByName(defaults, 'waltz/vitest/setup')).toBeUndefined()
+
+  const configs = await waltz({ vitest: true })
+  const setup = configByName(configs, 'waltz/vitest/setup')
+  const rules = configByName(configs, 'waltz/vitest/rules')
+
+  expect(setup?.files).toEqual([VITEST_JS_FILES])
+  expect(setup?.plugins?.vitest).toBeDefined()
+  expect(setup?.languageOptions?.globals?.describe).toBe('writable')
+  expect(rules?.rules?.['vitest/no-focused-tests']).toBe('error')
+
+  const withTypeScript = await waltz({ ts: true, vitest: true })
+  expect(configByName(withTypeScript, 'waltz/vitest/setup')?.files).toEqual([
+    VITEST_JS_FILES,
+    VITEST_TS_FILES,
+  ])
 })
 
 test('Perfectionist uses recommended-alphabetical by default', async () => {
@@ -127,10 +148,10 @@ test('Perfectionist uses recommended-alphabetical by default', async () => {
   const setup = configByName(configs, 'waltz/perfectionist/setup')
   const rules = configByName(configs, 'waltz/perfectionist/rules')
 
-  assert.equal(setup?.plugins?.perfectionist !== undefined, true)
-  assert.notEqual(rules?.rules?.['perfectionist/sort-objects'], undefined)
-  assert.notEqual(rules?.rules?.['perfectionist/sort-jsx-props'], undefined)
-  assert.equal(rules?.rules?.['@stylistic/jsx-sort-props'], undefined)
+  expect(setup?.plugins?.perfectionist).toBeDefined()
+  expect(rules?.rules?.['perfectionist/sort-objects']).toBeDefined()
+  expect(rules?.rules?.['perfectionist/sort-jsx-props']).toBeDefined()
+  expect(rules?.rules?.['@stylistic/jsx-sort-props']).toBeUndefined()
 })
 
 test('Perfectionist recommended presets can be selected', async () => {
@@ -139,14 +160,14 @@ test('Perfectionist recommended presets can be selected', async () => {
   })
   const rules = configByName(configs, 'waltz/perfectionist/rules')
 
-  assert.notEqual(rules?.rules?.['perfectionist/sort-objects'], undefined)
-  assert.notEqual(rules?.rules?.['perfectionist/sort-jsx-props'], undefined)
+  expect(rules?.rules?.['perfectionist/sort-objects']).toBeDefined()
+  expect(rules?.rules?.['perfectionist/sort-jsx-props']).toBeDefined()
 })
 
 test('Perfectionist can be disabled', async () => {
   const configs = await waltz({ perfectionist: false })
 
-  assert.equal(configByName(configs, 'waltz/perfectionist/setup'), undefined)
+  expect(configByName(configs, 'waltz/perfectionist/setup')).toBeUndefined()
 })
 
 test('Tailwind CSS can be enabled and configured', async () => {
@@ -160,10 +181,10 @@ test('Tailwind CSS can be enabled and configured', async () => {
   const setup = configByName(configs, 'waltz/tailwindcss/setup')
   const rules = configByName(configs, 'waltz/tailwindcss/rules')
 
-  assert.deepEqual(setup?.files, [JS_FILES])
-  assert.equal(setup?.plugins?.tailwindcss !== undefined, true)
-  assert.equal(rules?.rules?.['tailwindcss/classnames-order'], 'warn')
-  assert.deepEqual(rules?.settings, {
+  expect(setup?.files).toEqual([JS_FILES])
+  expect(setup?.plugins?.tailwindcss).toBeDefined()
+  expect(rules?.rules?.['tailwindcss/classnames-order']).toBe('warn')
+  expect(rules?.settings).toEqual({
     tailwindcss: { cssConfigPath: './src/styles.css' },
   })
 })
@@ -171,14 +192,14 @@ test('Tailwind CSS can be enabled and configured', async () => {
 test('Tailwind CSS is disabled by default', async () => {
   const configs = await waltz()
 
-  assert.equal(configByName(configs, 'waltz/tailwindcss/setup'), undefined)
+  expect(configByName(configs, 'waltz/tailwindcss/setup')).toBeUndefined()
 })
 
 test('Tailwind CSS extends to TypeScript files when enabled', async () => {
   const configs = await waltz({ tailwindcss: true, ts: true })
   const setup = configByName(configs, 'waltz/tailwindcss/setup')
 
-  assert.deepEqual(setup?.files, [JS_FILES, TS_FILES])
+  expect(setup?.files).toEqual([JS_FILES, TS_FILES])
 })
 
 test('React TypeScript exceptions do not disable rules for JavaScript', async () => {
@@ -189,15 +210,13 @@ test('React TypeScript exceptions do not disable rules for JavaScript', async ()
     'waltz/react/typescript-rules',
   )
 
-  assert.equal(
+  expect(
     reactRules?.rules?.['@eslint-react/dom/no-unknown-property'],
-    'warn',
-  )
-  assert.deepEqual(reactTypeScriptRules?.files, [TS_FILES])
-  assert.equal(
+  ).toBe('warn')
+  expect(reactTypeScriptRules?.files).toEqual([TS_FILES])
+  expect(
     reactTypeScriptRules?.rules?.['@eslint-react/dom/no-unknown-property'],
-    'off',
-  )
+  ).toBe('off')
 })
 
 test('TypeScript configuration parses TypeScript files', async () => {
@@ -209,11 +228,10 @@ test('TypeScript configuration parses TypeScript files', async () => {
     filePath: 'sample.ts',
   })
 
-  assert.equal(
+  expect(
     result.messages.some(message =>
       message.message.startsWith('Parsing error:'),
     ),
-    false,
-  )
-  assert.equal(result.messages.some(message => message.ruleId === 'no-var'), true)
+  ).toBe(false)
+  expect(result.messages.some(message => message.ruleId === 'no-var')).toBe(true)
 })

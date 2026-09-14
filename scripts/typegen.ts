@@ -16,6 +16,7 @@ import {
   importStylisticPlugin,
   importTailwindcssPlugin,
   importTypeScriptPlugin,
+  importVitestPlugin,
 } from '../src/packages'
 
 const pluginImporters: Record<string, () => Promise<ESLint.Plugin>> = {
@@ -31,6 +32,7 @@ const pluginImporters: Record<string, () => Promise<ESLint.Plugin>> = {
   'jsonc': importJsoncPlugin,
   'perfectionist': importPerfectionistPlugin,
   'tailwindcss': importTailwindcssPlugin,
+  'vitest': importVitestPlugin,
 }
 
 const plugins: Record<string, ESLint.Plugin> = {}

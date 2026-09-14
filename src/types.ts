@@ -77,9 +77,15 @@ export interface TailwindcssOptions extends SharedOptions {
   }
 }
 export type TsOptions = SharedOptions
-
 export type UnresolvedLinterConfig
   = Arraiable<LinterConfig> | Promise<Arraiable<LinterConfig>>
+
+export interface VitestOptions extends SharedOptions {
+  /**
+   * Configure shared Vitest settings, such as `typecheck` or custom fixtures.
+   */
+  settings?: Linter.Config['settings']
+}
 
 export interface WaltzOptions {
   /**
@@ -137,7 +143,6 @@ export interface WaltzOptions {
    *
    * @default true
    * @see https://perfectionist.dev/configs
-   * @see https://perfectionist.dev/rules/sort-jsx-props
    */
   perfectionist?: boolean | PerfectionistOptions
   /**
@@ -156,12 +161,11 @@ export interface WaltzOptions {
    *
    * This configuration is always enabled and uses `@stylistic/eslint-plugin`.
    * It targets JavaScript files by default, and also targets TypeScript files
-   * when `ts` is enabled. Perfectionist is provided as a separate default
-   * configuration through the `perfectionist` option.
+   * when `ts` is enabled. Configure Perfectionist sorting separately with the
+   * `perfectionist` option.
    *
    * @default {}
    * @see https://eslint.style/
-   * @see https://perfectionist.dev/rules/sort-jsx-props
    */
   stylistic?: StylisticOptions
   /**
@@ -194,6 +198,16 @@ export interface WaltzOptions {
    * @see https://typescript-eslint.io/linting/configs/#recommended-config
    */
   ts?: boolean | TsOptions
+  /**
+   * Enable Vitest-specific rules for test files.
+   *
+   * By default, JavaScript test files matching `*.test.*` or `*.spec.*` are
+   * included. TypeScript test files are included when `ts` is enabled.
+   *
+   * @default false
+   * @see https://github.com/vitest-dev/eslint-plugin-vitest
+   */
+  vitest?: boolean | VitestOptions
 }
 
 type Arraiable<T> = Array<T> | T

@@ -2,44 +2,42 @@
 
 ## 1.1.1
 
-### Patch Changes
+### Changed
 
-- Use the `recommended-alphabetical` Perfectionist preset by default and avoid duplicate import sorting when Perfectionist is enabled.
-- Prevent sorting-rule conflicts across custom file scopes and keep JSON special-file sorting isolated from general JSON configuration.
+- Use `recommended-alphabetical` as the default Perfectionist preset.
 - Remove commit hashes from generated changelog entries.
 
 ## 1.1.0
 
-### Minor Changes
+### Changed
 
-- Enable **recommended-alphabetical** by default
+- Enable `recommended-alphabetical` by default.
 
 ## 1.0.0
 
-### Major Changes
+### Added
 
-- Migrate to ESLint 10 and replace `eslint-plugin-import` with `eslint-plugin-import-x` while preserving the existing `imports/`* rule IDs.
-- Replace the deprecated stylistic JSX prop sorting rule with the independent Perfectionist configuration. The default configuration enables `sort-jsx-props`, and full recommended presets can be selected.
+- Add Tailwind CSS support.
 
-### Minor Changes
+### Changed
 
-- Add support for Tailwind CSS.
+- Migrate to ESLint 10 and replace `eslint-plugin-import` with `eslint-plugin-import-x`.
+- Replace the deprecated JSX prop sorting rule with Perfectionist.
 
 ## 0.1.1
 
-### Patch Changes
+### Changed
 
-- We have adjusted the default for `import` to `true`.
+- Enable the `imports` configuration by default.
 
 ## 0.1.0
 
-### Minor Changes
+### Added
 
-- Add the `eslint-waltz sync-vscode` CLI command for synchronizing ESLint fix-on-save settings.
+- Add the `eslint-waltz sync-vscode` CLI command.
 
 ## 0.0.0
 
-### Minor Changes
+### Changed
 
-- Fix feature option handling and file scoping, add official recommended presets, and make the package build and validation workflow reproducible.
-
+- Improve feature option handling, file scoping, and the release workflow.

@@ -1,9 +1,8 @@
 import { parse } from 'jsonc-parser'
-import assert from 'node:assert/strict'
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import test from 'node:test'
+import { expect, test } from 'vitest'
 
 import { syncVSCodeSettings } from '../src/cli/vscode'
 
@@ -29,22 +28,20 @@ test('syncs and preserves VS Code settings', async () => {
     const source = await readFile(join(cwd, '.vscode', 'settings.json'), 'utf8')
     const settings = parse(source)
 
-    assert.equal(first.changed, true)
-    assert.equal(settings['prettier.enable'], false)
-    assert.equal(settings['editor.formatOnSave'], false)
-    assert.equal(
+    expect(first.changed).toBe(true)
+    expect(settings['prettier.enable']).toBe(false)
+    expect(settings['editor.formatOnSave']).toBe(false)
+    expect(
       settings['editor.codeActionsOnSave']['source.fixAll.eslint'],
-      'explicit',
-    )
-    assert.equal(
+    ).toBe('explicit')
+    expect(
       settings['editor.codeActionsOnSave']['source.organizeImports'],
-      'explicit',
-    )
-    assert.equal(settings['files.trimTrailingWhitespace'], true)
-    assert.match(source, /Keep unrelated settings and comments/)
+    ).toBe('explicit')
+    expect(settings['files.trimTrailingWhitespace']).toBe(true)
+    expect(source).toMatch(/Keep unrelated settings and comments/)
 
     const second = await syncVSCodeSettings(cwd)
-    assert.equal(second.changed, false)
+    expect(second.changed).toBe(false)
   }
   finally {
     await rm(cwd, { force: true, recursive: true })
@@ -58,8 +55,8 @@ test('creates missing VS Code settings', async () => {
     const result = await syncVSCodeSettings(cwd)
     const source = await readFile(join(cwd, '.vscode', 'settings.json'), 'utf8')
 
-    assert.equal(result.changed, true)
-    assert.deepEqual(parse(source), {
+    expect(result.changed).toBe(true)
+    expect(parse(source)).toEqual({
       'editor.codeActionsOnSave': {
         'source.fixAll.eslint': 'explicit',
       },
