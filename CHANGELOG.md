@@ -1,5 +1,11 @@
 # @chanyuxi/eslint-waltz
 
+## 1.3.0
+
+### Minor Changes
+
+- Improve TypeScript scopes, React parser support, import defaults, peer errors, and declaration output.
+
 ## 1.2.0
 
 ### Minor Changes
