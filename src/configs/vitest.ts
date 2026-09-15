@@ -1,21 +1,21 @@
 import type { LinterConfig, VitestOptions } from '../types'
 
-import { VITEST_JS_FILES, VITEST_TS_FILES } from '../constants'
+import {
+  getVitestScope,
+  resolveFiles,
+  type ScriptScope,
+} from '../internal/files'
 import { importVitestPlugin } from '../packages'
-
-interface RelativeOptions {
-  isEnableTypeScript: boolean
-}
 
 export default async function vitestConfig(
   options: VitestOptions = {},
-  relative: RelativeOptions,
+  scriptScope: ScriptScope,
 ): Promise<LinterConfig[]> {
   const vitest = await importVitestPlugin()
-  const testFiles = relative.isEnableTypeScript
-    ? [VITEST_JS_FILES, VITEST_TS_FILES]
-    : [VITEST_JS_FILES]
-  const files = options.files ?? testFiles
+  const testScope = options.files
+    ? { files: options.files }
+    : getVitestScope(scriptScope)
+  const files = resolveFiles(options.files, testScope.files)
 
   return [
     {

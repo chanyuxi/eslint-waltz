@@ -16,6 +16,10 @@ function configByName(
   return configs.find(config => config.name === name)
 }
 
+function ruleSeverity(rule: unknown) {
+  return Array.isArray(rule) ? rule[0] : rule
+}
+
 test('json can be disabled and configured', async () => {
   const defaults = await waltz()
   expect(configByName(defaults, 'waltz/jsonc/setup')).not.toBeUndefined()
@@ -67,6 +71,48 @@ test('script-only features do not match TypeScript unless enabled', async () => 
   expect(typescriptImportRules?.files).toEqual([JS_FILES, TS_FILES])
 })
 
+test('custom TypeScript files limit dependent module scopes', async () => {
+  const typeScriptFiles = ['src/**/*.ts']
+  const configs = await waltz({
+    react: true,
+    tailwindcss: true,
+    ts: { files: typeScriptFiles },
+    vitest: true,
+  })
+  const scriptFiles = [JS_FILES, ...typeScriptFiles]
+
+  expect(configByName(configs, 'waltz/react/rules')?.files).toEqual(scriptFiles)
+  expect(
+    configByName(configs, 'waltz/react/typescript-rules')?.files,
+  ).toEqual(typeScriptFiles)
+
+  const eslint = new ESLint({
+    overrideConfig: configs,
+    overrideConfigFile: true,
+  })
+  const inScope = await eslint.calculateConfigForFile('src/example.test.ts')
+  const outOfScope = await eslint.calculateConfigForFile('tests/example.test.ts')
+
+  expect(inScope?.rules?.['vitest/no-focused-tests']).toBeDefined()
+  expect(outOfScope?.rules?.['vitest/no-focused-tests']).toBeUndefined()
+
+  const reactEslint = new ESLint({
+    overrideConfig: await waltz({
+      react: { files: ['ui/**/*.tsx'] },
+      ts: { files: typeScriptFiles },
+    }),
+    overrideConfigFile: true,
+  })
+  const [reactResult] = await reactEslint.lintText(
+    'const Component: string = <div />\n',
+    { filePath: 'ui/Component.tsx' },
+  )
+
+  expect(
+    reactResult.messages.some(message => message.message.startsWith('Parsing error:')),
+  ).toBe(false)
+})
+
 test('imports are enabled by default and can be disabled', async () => {
   const defaults = await waltz()
   const setup = configByName(defaults, 'waltz/imports/setup')
@@ -74,7 +120,24 @@ test('imports are enabled by default and can be disabled', async () => {
 
   expect(setup?.plugins?.imports).toBeDefined()
   expect(setup).toBeDefined()
+  expect(defaultRules?.rules?.['imports/named']).toBeUndefined()
+  expect(defaultRules?.rules?.['imports/namespace']).toBeUndefined()
   expect(defaultRules?.rules?.['imports/order']).toBeUndefined()
+
+  const explicitlyEnabled = await waltz({
+    imports: {
+      overrides: {
+        'imports/named': 'error',
+        'imports/namespace': 'error',
+      },
+    },
+  })
+  const explicitlyEnabledRules = configByName(
+    explicitlyEnabled,
+    'waltz/imports/rules',
+  )
+  expect(explicitlyEnabledRules?.rules?.['imports/named']).toBe('error')
+  expect(explicitlyEnabledRules?.rules?.['imports/namespace']).toBe('error')
 
   const defaultEslint = new ESLint({
     overrideConfig: defaults,
@@ -83,7 +146,7 @@ test('imports are enabled by default and can be disabled', async () => {
   const defaultFileConfig = await defaultEslint.calculateConfigForFile(
     'src/example.js',
   )
-  expect(defaultFileConfig?.rules?.['imports/order']).toBeUndefined()
+  expect(ruleSeverity(defaultFileConfig?.rules?.['imports/order'])).toBe(0)
 
   const disabled = await waltz({ imports: false })
   expect(configByName(disabled, 'waltz/imports/setup')).toBeUndefined()
@@ -118,9 +181,26 @@ test('sorting rules respect custom file scopes', async () => {
   )
 
   expect(sourceConfig?.rules?.['perfectionist/sort-imports']).toBeDefined()
-  expect(sourceConfig?.rules?.['imports/order']).toBeUndefined()
+  expect(ruleSeverity(sourceConfig?.rules?.['imports/order'])).toBe(0)
   expect(scriptConfig?.rules?.['imports/order']).toBeDefined()
   expect(scriptConfig?.rules?.['perfectionist/sort-imports']).toBeUndefined()
+})
+
+test('Perfectionist disables imports ordering in its scope', async () => {
+  const configs = await waltz({
+    perfectionist: {
+      files: [['src/**/*.ts', '**/*.test.ts']],
+    },
+    ts: true,
+  })
+  const eslint = new ESLint({
+    overrideConfig: configs,
+    overrideConfigFile: true,
+  })
+  const fileConfig = await eslint.calculateConfigForFile('src/example.test.ts')
+
+  expect(ruleSeverity(fileConfig?.rules?.['imports/order'])).toBe(0)
+  expect(fileConfig?.rules?.['perfectionist/sort-imports']).toBeDefined()
 })
 
 test('Vitest rules can be enabled for test files', async () => {
@@ -133,7 +213,7 @@ test('Vitest rules can be enabled for test files', async () => {
 
   expect(setup?.files).toEqual([VITEST_JS_FILES])
   expect(setup?.plugins?.vitest).toBeDefined()
-  expect(setup?.languageOptions?.globals?.describe).toBe('writable')
+  expect(setup?.languageOptions?.globals).toMatchObject({ describe: 'writable' })
   expect(rules?.rules?.['vitest/no-focused-tests']).toBe('error')
 
   const withTypeScript = await waltz({ ts: true, vitest: true })
@@ -217,6 +297,22 @@ test('React TypeScript exceptions do not disable rules for JavaScript', async ()
   expect(
     reactTypeScriptRules?.rules?.['@eslint-react/dom/no-unknown-property'],
   ).toBe('off')
+})
+
+test('React settings can be configured', async () => {
+  const configs = await waltz({
+    react: {
+      settings: {
+        'react-x': { importSource: 'preact' },
+      },
+    },
+  })
+  const rules = configByName(configs, 'waltz/react/rules')
+
+  expect(rules?.settings?.['react-x']).toMatchObject({
+    importSource: 'preact',
+    skipImportCheck: true,
+  })
 })
 
 test('TypeScript configuration parses TypeScript files', async () => {

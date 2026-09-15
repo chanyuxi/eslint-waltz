@@ -1,6 +1,11 @@
 import type { JsoncOptions, LinterConfig } from '../types'
 
-import { JSON_FILES } from '../constants'
+import {
+  JSON_FILES,
+  PACKAGE_JSON_FILES,
+  TS_CONFIG_FILES,
+} from '../constants'
+import { resolveFiles } from '../internal/files'
 import { importJsoncParser, importJsoncPlugin } from '../packages'
 
 export default async function jsoncConfig(
@@ -10,14 +15,11 @@ export default async function jsoncConfig(
     importJsoncPlugin(),
     importJsoncParser(),
   ] as const)
-  const files = options.files ?? [JSON_FILES]
-  const packageJsonFiles = ['**/package.json']
-  const tsconfigFiles = [
-    '**/[jt]sconfig.json',
-    '**/[jt]sconfig.*.json',
-  ]
+
+  const files = resolveFiles(options.files, [JSON_FILES])
+
   const setupFiles = options.files
-    ? [...options.files, ...packageJsonFiles, ...tsconfigFiles]
+    ? [...options.files, ...PACKAGE_JSON_FILES, ...TS_CONFIG_FILES]
     : files
 
   return [
@@ -71,7 +73,7 @@ export default async function jsoncConfig(
       },
     },
     {
-      files: packageJsonFiles,
+      files: PACKAGE_JSON_FILES,
       name: 'waltz/jsonc/sort/package-json',
       rules: {
         'jsonc/sort-array-values': [
@@ -172,7 +174,7 @@ export default async function jsoncConfig(
       },
     },
     {
-      files: tsconfigFiles,
+      files: TS_CONFIG_FILES,
       name: 'waltz/jsonc/sort/tsconfig-json',
       rules: {
         'jsonc/sort-keys': [

@@ -55,3 +55,52 @@ Enabled by default:
 Optional: `ts`, `react`, `tailwindcss`, `gitignore`, and `vitest`.
 
 More options are documented in the exported TypeScript types.
+
+The potentially expensive module-resolution rules are disabled by default. Enable
+them explicitly when your project needs them:
+
+```ts
+export default waltz({
+  imports: {
+    overrides: {
+      'imports/named': 'error',
+      'imports/namespace': 'error',
+    },
+  },
+})
+```
+
+## TypeScript file scope
+
+When `ts.files` is provided, it is the maximum TypeScript scope used by the
+other modules that automatically include TypeScript files. JavaScript files
+keep their normal scope, and a module's own `files` option can override this
+limit. Vitest additionally intersects its test-file patterns with this scope.
+
+```ts
+export default waltz({
+  ts: { files: ['src/**/*.ts'] },
+  react: true,
+})
+```
+
+## VS Code synchronization
+
+Run this command from your project root to enable ESLint fix-on-save settings
+while preserving existing `.vscode/settings.json` values and comments:
+
+```bash
+npx eslint-waltz sync-vscode
+```
+
+React plugin settings can be customized when needed:
+
+```ts
+export default waltz({
+  react: {
+    settings: {
+      'react-x': { importSource: 'preact' },
+    },
+  },
+})
+```

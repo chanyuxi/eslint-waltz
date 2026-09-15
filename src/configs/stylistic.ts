@@ -1,21 +1,21 @@
 import type { LinterConfig, StylisticOptions } from '../types'
 
-import { ALL_SCRIPTS_FILES, JS_FILES } from '../constants'
+import {
+  getScriptFiles,
+  resolveFiles,
+  type ScriptScope,
+} from '../internal/files'
 import { importStylisticPlugin } from '../packages'
-
-interface RelativeOptions {
-  isEnableTypeScript: boolean
-}
 
 export default async function stylisticConfig(
   options: StylisticOptions = {},
-  relative: RelativeOptions,
+  scriptScope: ScriptScope,
 ): Promise<LinterConfig[]> {
   const eslintStylistic = await importStylisticPlugin()
-  const scriptFiles = relative.isEnableTypeScript
-    ? ALL_SCRIPTS_FILES
-    : [JS_FILES]
-  const ruleFiles = options.files ?? scriptFiles
+  const ruleFiles = resolveFiles(
+    options.files,
+    getScriptFiles(scriptScope),
+  )
 
   // Directly use the generated recommendation rules
   const configs = eslintStylistic.configs.customize()

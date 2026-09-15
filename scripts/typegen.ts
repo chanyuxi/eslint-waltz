@@ -45,4 +45,4 @@ const dts = await pluginsToRulesDTS(plugins, {
   includeAugmentation: false,
 })
 
-await fs.writeFile('src/typegen.d.ts', dts)
+await fs.writeFile('src/typegen.ts', `// @ts-nocheck\n${dts}`)

@@ -44,7 +44,7 @@
     "gen": "tsx scripts/typegen.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "typeCheck": "pnpm gen && tsc --noEmit",
+    "typeCheck": "pnpm gen && tsc --noEmit -p tsconfig.test.json",
     "test": "vitest run",
     "check": "pnpm run typeCheck && pnpm run lint && pnpm run test",
     "changeset": "changeset",

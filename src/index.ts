@@ -16,7 +16,7 @@ import {
   tsConfig,
   vitestConfig,
 } from './configs'
-import { ALL_SCRIPTS_FILES, JS_FILES } from './constants'
+import { resolveFileScopes } from './internal/files'
 
 async function waltz(
   options: WaltzOptions = {},
@@ -24,21 +24,8 @@ async function waltz(
 ): Promise<LinterConfig[]> {
   const isEnableTypeScript = !!options.ts
   const isEnableReact = !!options.react
-  const isEnablePerfectionist = options.perfectionist !== false
 
-  const scriptFiles = isEnableTypeScript ? ALL_SCRIPTS_FILES : [JS_FILES]
-  const configuredPerfectionistFiles
-    = typeof options.perfectionist === 'object'
-      ? options.perfectionist.files
-      : undefined
-
-  const hasSimplePerfectionistFiles
-    = configuredPerfectionistFiles?.every(file => typeof file === 'string')
-  const perfectionistFiles = isEnablePerfectionist
-    ? hasSimplePerfectionistFiles
-      ? configuredPerfectionistFiles as string[]
-      : scriptFiles
-    : undefined
+  const { scriptScope } = resolveFileScopes(options)
 
   const configs: UnresolvedLinterConfig[] = []
 
@@ -51,9 +38,7 @@ async function waltz(
     jsConfig(options.js, {
       isEnableReact,
     }),
-    stylisticConfig(options.stylistic, {
-      isEnableTypeScript,
-    }),
+    stylisticConfig(options.stylistic, scriptScope),
   )
 
   if (options.json !== false) {
@@ -71,34 +56,25 @@ async function waltz(
   if (options.imports !== false) {
     configs.push(
       importsConfig(
-        isEnableTypeScript,
+        scriptScope,
         options.imports === true || options.imports === undefined
           ? {}
           : options.imports,
-        {
-          perfectionistFiles,
-        },
       ),
     )
   }
 
   if (isEnableReact) {
     configs.push(
-      reactConfig(options.react, {
-        isEnableTypeScript,
-      }),
+      reactConfig(options.react, scriptScope),
     )
   }
 
   if (options.perfectionist !== false) {
     configs.push(
       perfectionistConfig(
-        options.perfectionist === true || options.perfectionist === undefined
-          ? {}
-          : options.perfectionist,
-        {
-          isEnableTypeScript,
-        },
+        options.perfectionist === true ? {} : options.perfectionist,
+        scriptScope,
       ),
     )
   }
@@ -107,9 +83,7 @@ async function waltz(
     configs.push(
       tailwindcssConfig(
         options.tailwindcss === true ? {} : options.tailwindcss,
-        {
-          isEnableTypeScript,
-        },
+        scriptScope,
       ),
     )
   }
@@ -118,9 +92,7 @@ async function waltz(
     configs.push(
       vitestConfig(
         options.vitest === true ? {} : options.vitest,
-        {
-          isEnableTypeScript,
-        },
+        scriptScope,
       ),
     )
   }

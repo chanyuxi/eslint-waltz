@@ -23,7 +23,7 @@
 
 ### Changed
 
-- Enable `recommended-alphabetical` by default.
+- Enable `recommended-alphabetical` by default. Bug prevents it from taking effect; migrate to v1.1.1.
 
 ## 1.0.0
 

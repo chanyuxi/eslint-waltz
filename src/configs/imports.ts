@@ -1,20 +1,19 @@
 import type { ImportsOptions, LinterConfig } from '../types'
 
-import { ALL_SCRIPTS_FILES, JS_FILES } from '../constants'
+import {
+  getScriptFiles,
+  resolveFiles,
+  type ScriptScope,
+} from '../internal/files'
 import { importImportXPlugin } from '../packages'
 
-interface RelativeOptions {
-  perfectionistFiles?: LinterConfig['ignores']
-}
-
 export default async function importsConfig(
-  isEnableTypeScript = false,
+  scriptScope: ScriptScope,
   options: ImportsOptions = {},
-  relative: RelativeOptions = {},
 ): Promise<LinterConfig[]> {
   const importsPlugin = await importImportXPlugin()
-  const scriptFiles = isEnableTypeScript ? ALL_SCRIPTS_FILES : [JS_FILES]
-  const files = options.files ?? scriptFiles
+
+  const files = resolveFiles(options.files, getScriptFiles(scriptScope))
   const {
     'imports/order': orderOverride,
     ...overrides
@@ -81,9 +80,6 @@ export default async function importsConfig(
         'imports/default': 'error',
         'imports/export': 'error',
 
-        'imports/named': 'error',
-        'imports/namespace': 'error',
-
         'imports/no-duplicates': 'warn',
         'imports/no-named-as-default': 'warn',
         'imports/no-named-as-default-member': 'warn',
@@ -93,9 +89,6 @@ export default async function importsConfig(
     },
     {
       files,
-      ...(relative.perfectionistFiles
-        ? { ignores: relative.perfectionistFiles }
-        : {}),
       name: 'waltz/imports/order',
       rules: orderRules,
     },

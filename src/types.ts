@@ -47,7 +47,14 @@ export type PerfectionistPreset
     | 'recommended-line-length'
     | 'recommended-natural'
 
-export type ReactOptions = SharedOptions
+export interface ReactOptions extends SharedOptions {
+  /**
+   * Configure the settings consumed by the React ESLint plugins.
+   *
+   * Settings are merged with the defaults used by this module.
+   */
+  settings?: Linter.Config['settings']
+}
 export interface SharedOptions {
   /**
    * Restrict this module's configuration to the specified files.
@@ -107,6 +114,10 @@ export interface WaltzOptions {
    * enabled. Set this option to `false` to disable it, or pass an options
    * object to change the file scope or override rules.
    *
+   * The module-resolution rules `imports/named` and `imports/namespace` are
+   * disabled by default because they can be expensive. Enable them explicitly
+   * through `overrides` when needed.
+   *
    * @default true
    * @see https://github.com/un-ts/eslint-plugin-import-x
    */
@@ -150,7 +161,9 @@ export interface WaltzOptions {
    *
    * JavaScript and JSX files are included by default. When `ts` is enabled,
    * TypeScript and TSX files are included as well. Pass an options object to
-   * change the file scope or override rules.
+   * change the file scope or override rules. If custom React files include
+   * TypeScript files outside `ts.files`, they receive the TypeScript parser;
+   * TypeScript-specific rule exceptions remain limited to `ts.files`.
    *
    * @default false
    * @see https://github.com/Rel1cx/eslint-react
@@ -191,8 +204,12 @@ export interface WaltzOptions {
    * options object additionally allows the TypeScript file scope and rules to
    * be customized with `files` and `overrides`.
    *
-   * When enabled, the default stylistic, import, and React configurations also
-   * include TypeScript files when those configurations are enabled.
+   * When enabled, the default stylistic, import, React, Perfectionist,
+   * Tailwind CSS, and Vitest configurations also include TypeScript files when
+   * those configurations are enabled. If `files` is provided, it becomes the
+   * maximum TypeScript scope for those modules. Their own `files` options can
+   * still override that scope. For Vitest, the default test-file patterns are
+   * intersected with this scope.
    *
    * @default false
    * @see https://typescript-eslint.io/linting/configs/#recommended-config
@@ -203,6 +220,8 @@ export interface WaltzOptions {
    *
    * By default, JavaScript test files matching `*.test.*` or `*.spec.*` are
    * included. TypeScript test files are included when `ts` is enabled.
+   * When `ts.files` is customized, TypeScript test files are limited to that
+   * scope unless this module's own `files` option is provided.
    *
    * @default false
    * @see https://github.com/vitest-dev/eslint-plugin-vitest

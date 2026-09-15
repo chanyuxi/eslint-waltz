@@ -3,22 +3,23 @@ import type {
   PerfectionistOptions,
 } from '../types'
 
-import { ALL_SCRIPTS_FILES, JS_FILES } from '../constants'
+import {
+  getScriptFiles,
+  resolveFiles,
+  type ScriptScope,
+} from '../internal/files'
 import { importPerfectionistPlugin } from '../packages'
-
-interface RelativeOptions {
-  isEnableTypeScript: boolean
-}
 
 export default async function perfectionistConfig(
   options: PerfectionistOptions = {},
-  relative: RelativeOptions,
+  scriptScope: ScriptScope,
 ): Promise<LinterConfig[]> {
   const perfectionist = await importPerfectionistPlugin()
-  const scriptFiles = relative.isEnableTypeScript
-    ? ALL_SCRIPTS_FILES
-    : [JS_FILES]
-  const ruleFiles = options.files ?? scriptFiles
+
+  const ruleFiles = resolveFiles(
+    options.files,
+    getScriptFiles(scriptScope),
+  )
   const preset = options.preset ?? 'recommended-alphabetical'
   const recommendedRules = perfectionist.configs[preset].rules ?? {}
 
@@ -28,6 +29,16 @@ export default async function perfectionistConfig(
       name: 'waltz/perfectionist/setup',
       plugins: {
         perfectionist,
+      },
+    },
+    {
+      files: ruleFiles,
+      name: 'waltz/perfectionist/disable-imports-order',
+      rules: {
+        // Since both the `import` plugin and `perfectionist` support import/export sorting
+        // configurations, we need to know the scope of the latter so that the former can
+        // serve as a fallback for other files.
+        'imports/order': 'off',
       },
     },
     {

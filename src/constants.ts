@@ -5,4 +5,6 @@ export const VITEST_TS_FILES = '**/*.{test,spec}.?([cm])ts?(x)'
 
 export const JSON_FILES = '**/*.{json,json5,jsonc}'
 
-export const ALL_SCRIPTS_FILES = [JS_FILES, TS_FILES]
+export const PACKAGE_JSON_FILES = ['**/package.json']
+
+export const TS_CONFIG_FILES = ['**/[jt]sconfig.json', '**/[jt]sconfig.*.json']

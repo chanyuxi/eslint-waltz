@@ -4,6 +4,7 @@ import globals from 'globals'
 import type { JsOptions, LinterConfig } from '../types'
 
 import { JS_FILES } from '../constants'
+import { resolveFiles } from '../internal/files'
 
 interface relativeOptions {
   isEnableReact: boolean
@@ -14,7 +15,7 @@ export default function jsConfig(
   relative: relativeOptions,
 ): LinterConfig {
   return {
-    files: config.files ?? [JS_FILES],
+    files: resolveFiles(config.files, [JS_FILES]),
     languageOptions: {
       globals: {
         ...(config.globals

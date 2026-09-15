@@ -1,22 +1,23 @@
 import type { LinterConfig, TailwindcssOptions } from '../types'
 
-import { ALL_SCRIPTS_FILES, JS_FILES } from '../constants'
+import {
+  getScriptFiles,
+  resolveFiles,
+  type ScriptScope,
+} from '../internal/files'
 import { importTailwindcssPlugin } from '../packages'
-
-interface RelativeOptions {
-  isEnableTypeScript: boolean
-}
 
 export default async function tailwindcssConfig(
   options: TailwindcssOptions = {},
-  relative: RelativeOptions,
+  scriptScope: ScriptScope,
 ): Promise<LinterConfig[]> {
   const tailwindcss = await importTailwindcssPlugin()
+
   const recommended = tailwindcss.configs.recommended
-  const scriptFiles = relative.isEnableTypeScript
-    ? ALL_SCRIPTS_FILES
-    : [JS_FILES]
-  const files = options.files ?? scriptFiles
+  const files = resolveFiles(
+    options.files,
+    getScriptFiles(scriptScope),
+  )
 
   return [
     {

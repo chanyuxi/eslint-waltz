@@ -1,6 +1,12 @@
 import type { LinterConfig, ReactOptions } from '../types'
 
-import { ALL_SCRIPTS_FILES, JS_FILES, TS_FILES } from '../constants'
+import { TS_FILES } from '../constants'
+import {
+  getScriptFiles,
+  intersectFiles,
+  resolveFiles,
+  type ScriptScope,
+} from '../internal/files'
 import {
   importReactDebugPlugin,
   importReactDomPlugin,
@@ -8,19 +14,13 @@ import {
   importReactNamingConventionPlugin,
   importReactPlugin,
   importReactWebApiPlugin,
+  importTypeScriptParser,
 } from '../packages'
-
-interface relativeOptions {
-  isEnableTypeScript: boolean
-}
 
 export default async function reactConfig(
   options: boolean | ReactOptions = {},
-  relative: relativeOptions,
+  scriptScope: ScriptScope,
 ): Promise<LinterConfig[]> {
-  const resolvedConfig: ReactOptions
-    = typeof options === 'boolean' ? {} : options
-
   const [
     reactPlugin,
     reactDebugPlugin,
@@ -36,19 +36,41 @@ export default async function reactConfig(
     importReactNamingConventionPlugin(),
     importReactWebApiPlugin(),
   ] as const)
-  const scriptFiles = relative.isEnableTypeScript
-    ? ALL_SCRIPTS_FILES
-    : [JS_FILES]
-  const ruleFiles = resolvedConfig.files ?? scriptFiles
-  const setupFiles = relative.isEnableTypeScript && resolvedConfig.files
-    ? [...resolvedConfig.files, TS_FILES]
-    : relative.isEnableTypeScript
-      ? scriptFiles
-      : ruleFiles
-  const typeScriptRules: LinterConfig[] = relative.isEnableTypeScript
+
+  const resolvedConfig: ReactOptions
+    = typeof options === 'boolean' ? {} : options
+
+  const scriptFiles = getScriptFiles(scriptScope)
+  const ruleFiles = resolveFiles(resolvedConfig.files, scriptFiles)
+  const setupFiles = ruleFiles
+
+  const typeScriptRuleFiles = resolvedConfig.files
+    ? intersectFiles(resolvedConfig.files, scriptScope.typeScriptFiles)
+    : scriptScope.typeScriptFiles
+  const customTypeScriptFiles = resolvedConfig.files
+    && scriptScope.isEnableTypeScript
+    && scriptScope.isCustomTypeScriptFiles
+    ? intersectFiles(resolvedConfig.files, [TS_FILES])
+    : []
+  const typeScriptParser = customTypeScriptFiles.length > 0
+    ? await importTypeScriptParser()
+    : undefined
+  const typeScriptSetup: LinterConfig[] = typeScriptParser
     ? [
         {
-          files: [TS_FILES],
+          files: customTypeScriptFiles,
+          languageOptions: {
+            parser: typeScriptParser,
+          },
+          name: 'waltz/react/typescript-setup',
+        },
+      ]
+    : []
+
+  const typeScriptRules: LinterConfig[] = typeScriptRuleFiles.length > 0
+    ? [
+        {
+          files: typeScriptRuleFiles,
           name: 'waltz/react/typescript-rules',
           rules: {
             '@eslint-react/dom/no-unknown-property': 'off',
@@ -57,6 +79,32 @@ export default async function reactConfig(
         },
       ]
     : []
+
+  const defaultSettings = {
+    'react-x': {
+      additionalComponents: [],
+      additionalHooks: {
+        useEffect: ['useIsomorphicLayoutEffect'],
+        useLayoutEffect: ['useIsomorphicLayoutEffect'],
+      },
+      importSource: 'react',
+      polymorphicPropName: 'as',
+      skipImportCheck: true,
+      strict: true,
+      version: 'detect',
+    },
+  }
+  const reactSettings = resolvedConfig.settings?.['react-x']
+  const settings = {
+    ...defaultSettings,
+    ...resolvedConfig.settings,
+    'react-x': {
+      ...defaultSettings['react-x'],
+      ...(typeof reactSettings === 'object' && reactSettings !== null
+        ? reactSettings
+        : {}),
+    },
+  }
 
   return [
     {
@@ -71,6 +119,7 @@ export default async function reactConfig(
         '@eslint-react/web-api': reactWebApiPlugin,
       },
     },
+    ...typeScriptSetup,
     {
       files: ruleFiles,
       name: 'waltz/react/rules',
@@ -129,20 +178,7 @@ export default async function reactConfig(
         '@eslint-react/web-api/no-leaked-timeout': 'warn',
         ...resolvedConfig.overrides,
       },
-      settings: {
-        'react-x': {
-          additionalComponents: [],
-          additionalHooks: {
-            useEffect: ['useIsomorphicLayoutEffect'],
-            useLayoutEffect: ['useIsomorphicLayoutEffect'],
-          },
-          importSource: 'react',
-          polymorphicPropName: 'as',
-          skipImportCheck: true,
-          strict: true,
-          version: 'detect',
-        },
-      },
+      settings,
     },
     ...typeScriptRules,
   ]

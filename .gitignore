@@ -1,4 +1,5 @@
 node_modules
 dist
 
+/src/typegen.ts
 typegen.d.ts
