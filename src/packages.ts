@@ -1,16 +1,33 @@
-import { ESLint, Linter } from 'eslint'
+import type { LinterConfig } from './types'
+import type { ESLint, Linter } from 'eslint'
 
 import { importPeer } from './internal/peer'
+
+interface TailwindcssPlugin extends ESLint.Plugin {
+  configs: {
+    recommended: LinterConfig
+  }
+}
+
+interface TypeScriptModule {
+  parser: Linter.Parser
+  plugin: ESLint.Plugin
+}
 
 export function importGitignoreSeek() {
   return importDefault(
     'eslint-config-flat-gitignore',
     'Gitignore support',
+    () => import('eslint-config-flat-gitignore'),
   )
 }
 
 export function importImportXPlugin() {
-  return importDefault('eslint-plugin-import-x', 'Import validation')
+  return importDefault(
+    'eslint-plugin-import-x',
+    'Import validation',
+    () => import('eslint-plugin-import-x'),
+  )
 }
 
 export function importJsoncParser() {
@@ -24,84 +41,106 @@ export function importJsoncParser() {
 export function importJsoncPlugin() {
   return importDefaultAs(
     'eslint-plugin-jsonc',
-    d => d as unknown as ESLint.Plugin,
     'JSON/JSONC support',
+    () => import('eslint-plugin-jsonc'),
+    d => d as ESLint.Plugin,
   )
 }
 
 export function importPerfectionistPlugin() {
-  return importDefault('eslint-plugin-perfectionist', 'Perfectionist support')
+  return importDefault(
+    'eslint-plugin-perfectionist',
+    'Perfectionist support',
+    () => import('eslint-plugin-perfectionist'),
+  )
 }
 
 export function importReactDebugPlugin() {
   return importDefaultAs(
     'eslint-plugin-react-debug',
-    d => d as unknown as ESLint.Plugin,
     'React support',
+    () => import('eslint-plugin-react-debug'),
+    d => d as ESLint.Plugin,
   )
 }
 
 export function importReactDomPlugin() {
   return importDefaultAs(
     'eslint-plugin-react-dom',
-    d => d as unknown as ESLint.Plugin,
     'React support',
+    () => import('eslint-plugin-react-dom'),
+    d => d as ESLint.Plugin,
   )
 }
 
 export function importReactHookExtraPlugin() {
   return importDefaultAs(
     'eslint-plugin-react-hooks-extra',
-    d => d as unknown as ESLint.Plugin,
     'React support',
+    () => import('eslint-plugin-react-hooks-extra'),
+    d => d as ESLint.Plugin,
   )
 }
 
 export function importReactNamingConventionPlugin() {
   return importDefaultAs(
     'eslint-plugin-react-naming-convention',
-    d => d as unknown as ESLint.Plugin,
     'React support',
+    () => import('eslint-plugin-react-naming-convention'),
+    d => d as ESLint.Plugin,
   )
 }
 
 export function importReactPlugin() {
   return importDefaultAs(
     'eslint-plugin-react-x',
-    d => d as unknown as ESLint.Plugin,
     'React support',
+    () => import('eslint-plugin-react-x'),
+    d => d as ESLint.Plugin,
   )
 }
 
 export function importReactWebApiPlugin() {
   return importDefaultAs(
     'eslint-plugin-react-web-api',
-    d => d as unknown as ESLint.Plugin,
     'React support',
+    () => import('eslint-plugin-react-web-api'),
+    d => d as ESLint.Plugin,
   )
 }
 
 export function importStylisticPlugin() {
-  return importDefault('@stylistic/eslint-plugin', 'Stylistic rules')
+  return importDefault(
+    '@stylistic/eslint-plugin',
+    'Stylistic rules',
+    () => import('@stylistic/eslint-plugin'),
+  )
 }
 
 export function importTailwindcssPlugin() {
-  return importDefault('eslint-plugin-tailwindcss', 'Tailwind CSS support')
+  return importDefaultAs(
+    'eslint-plugin-tailwindcss',
+    'Tailwind CSS support',
+    () => import('eslint-plugin-tailwindcss'),
+    d => d as TailwindcssPlugin,
+  )
 }
 
 export function importTypeScriptParser() {
   return importDefaultAs(
     'typescript-eslint',
-    d => d.parser as Linter.Parser,
     'TypeScript support',
+    () => import('typescript-eslint'),
+    d => (d as TypeScriptModule).parser,
   )
 }
 
 export function importTypeScriptPlugin() {
   return importDefaultAs(
     'typescript-eslint',
-    d => d.plugin as ESLint.Plugin,
     'TypeScript support',
+    () => import('typescript-eslint'),
+    d => (d as TypeScriptModule).plugin,
   )
 }
 
@@ -126,21 +165,23 @@ export function importVitestPlugin() {
   )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function importDefault<T = any>(moduleName: string, featureName: string): Promise<T> {
+function importDefault<T>(
+  moduleName: string,
+  featureName: string,
+  importer: () => Promise<{ default: T }>,
+): Promise<T> {
   return importPeer(moduleName, featureName, () =>
-    import(moduleName).then(m => m.default),
+    importer().then(m => m.default),
   )
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function importDefaultAs<T = any>(
+function importDefaultAs<T>(
   moduleName: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  cast: (d: any) => T,
   featureName: string,
+  importer: () => Promise<{ default: unknown }>,
+  cast: (d: unknown) => T,
 ): Promise<T> {
   return importPeer(moduleName, featureName, () =>
-    import(moduleName).then(m => cast(m.default)),
+    importer().then(m => cast(m.default)),
   )
 }

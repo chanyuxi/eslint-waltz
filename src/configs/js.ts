@@ -1,7 +1,7 @@
+import type { JsOptions, LinterConfig } from '../types'
+
 import eslint from '@eslint/js'
 import globals from 'globals'
-
-import type { JsOptions, LinterConfig } from '../types'
 
 import { JS_FILES } from '../constants'
 import { resolveFiles } from '../internal/files'

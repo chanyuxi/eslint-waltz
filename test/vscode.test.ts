@@ -1,7 +1,8 @@
-import { parse } from 'jsonc-parser'
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+
+import { parse } from 'jsonc-parser'
 import { expect, test } from 'vitest'
 
 import { syncVSCodeSettings } from '../src/cli/vscode'

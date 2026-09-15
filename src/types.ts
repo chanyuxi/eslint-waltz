@@ -1,10 +1,7 @@
+import type { RuleOptions } from './typegen'
 import type { Linter } from 'eslint'
-import type { FlatGitignoreOptions } from 'eslint-config-flat-gitignore'
-import type { PluginSettings } from 'eslint-plugin-tailwindcss'
 
 import globals from 'globals'
-
-import type { RuleOptions } from './typegen'
 
 export type ImportsOptions = SharedOptions
 
@@ -55,6 +52,7 @@ export interface ReactOptions extends SharedOptions {
    */
   settings?: Linter.Config['settings']
 }
+
 export interface SharedOptions {
   /**
    * Restrict this module's configuration to the specified files.
@@ -71,6 +69,7 @@ export interface SharedOptions {
    */
   overrides?: LinterConfig['rules']
 }
+
 export type StylisticOptions = SharedOptions
 export interface TailwindcssOptions extends SharedOptions {
   /**
@@ -86,14 +85,12 @@ export interface TailwindcssOptions extends SharedOptions {
 export type TsOptions = SharedOptions
 export type UnresolvedLinterConfig
   = Arraiable<LinterConfig> | Promise<Arraiable<LinterConfig>>
-
 export interface VitestOptions extends SharedOptions {
   /**
    * Configure shared Vitest settings, such as `typecheck` or custom fixtures.
    */
   settings?: Linter.Config['settings']
 }
-
 export interface WaltzOptions {
   /**
    * Treat patterns from `.gitignore` as global ESLint ignores.
@@ -230,5 +227,25 @@ export interface WaltzOptions {
 }
 
 type Arraiable<T> = Array<T> | T
+
+interface FlatGitignoreOptions {
+  cwd?: string
+  files?: string | string[]
+  filesGitModules?: string | string[]
+  name?: string
+  recursive?: { skipDirs: string[] } | boolean
+  root?: boolean
+  strict?: boolean
+}
+
+interface PluginSettings {
+  attributes?: string[]
+  cacheMaxAge?: number
+  cacheMaxSize?: number
+  cssConfigPath: string
+  functions?: string[]
+  ignoredKeys?: string[]
+  parseKeyFunctions?: string[]
+}
 
 type Rules = Record<string, Linter.RuleEntry | undefined> & RuleOptions

@@ -4,6 +4,9 @@ import type {
 } from '../types'
 
 import {
+  getPerfectionistImportGroups,
+} from '../constants'
+import {
   getScriptFiles,
   resolveFiles,
   type ScriptScope,
@@ -22,6 +25,12 @@ export default async function perfectionistConfig(
   )
   const preset = options.preset ?? 'recommended-alphabetical'
   const recommendedRules = perfectionist.configs[preset].rules ?? {}
+  const importSortOptions = getRuleOptions(
+    recommendedRules['perfectionist/sort-imports'],
+  )
+  const exportSortOptions = getRuleOptions(
+    recommendedRules['perfectionist/sort-exports'],
+  )
 
   return [
     {
@@ -47,8 +56,36 @@ export default async function perfectionistConfig(
       ...(options.settings ? { settings: options.settings } : {}),
       rules: {
         ...recommendedRules,
+        'perfectionist/sort-exports': [
+          'error',
+          {
+            ...exportSortOptions,
+            newlinesBetween: 1,
+          },
+        ],
+        'perfectionist/sort-imports': [
+          'error',
+          {
+            ...importSortOptions,
+            groups: getPerfectionistImportGroups(),
+            internalPattern: ['^@/.+'],
+          },
+        ],
         ...options.overrides,
       },
     },
   ]
+}
+
+function getRuleOptions(rule: unknown): Record<string, unknown> {
+  if (!Array.isArray(rule)) {
+    return {}
+  }
+
+  const options = rule[1]
+  return typeof options === 'object'
+    && options !== null
+    && !Array.isArray(options)
+    ? options as Record<string, unknown>
+    : {}
 }

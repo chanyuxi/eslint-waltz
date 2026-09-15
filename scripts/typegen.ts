@@ -1,7 +1,8 @@
 import type { ESLint } from 'eslint'
 
-import { pluginsToRulesDTS } from 'eslint-typegen/core'
 import fs from 'node:fs/promises'
+
+import { pluginsToRulesDTS } from 'eslint-typegen/core'
 
 import {
   importImportXPlugin,

@@ -1,6 +1,5 @@
-import type { Linter } from 'eslint'
-
 import type { WaltzOptions } from '../types'
+import type { Linter } from 'eslint'
 
 import {
   JS_FILES,
@@ -15,6 +14,11 @@ export interface FileScope {
 
 export interface ResolvedFileScopes {
   scriptScope: ScriptScope
+}
+
+export interface ScriptFiles extends FileScope {
+  parserTypeScriptFiles: FilePatterns
+  typeScriptFiles: FilePatterns
 }
 
 export interface ScriptScope {
@@ -101,4 +105,25 @@ export function resolveFileScopes(
   )
 
   return { scriptScope }
+}
+
+export function resolveScriptFiles(
+  scope: ScriptScope,
+  configuredFiles?: Linter.Config['files'],
+): ScriptFiles {
+  const files = resolveFiles(configuredFiles, getScriptFiles(scope))
+  const typeScriptFiles = configuredFiles
+    ? intersectFiles(configuredFiles, scope.typeScriptFiles)
+    : scope.typeScriptFiles
+  const parserTypeScriptFiles = configuredFiles
+    && scope.isEnableTypeScript
+    && scope.isCustomTypeScriptFiles
+    ? intersectFiles(configuredFiles, [TS_FILES])
+    : []
+
+  return {
+    files,
+    parserTypeScriptFiles,
+    typeScriptFiles,
+  }
 }

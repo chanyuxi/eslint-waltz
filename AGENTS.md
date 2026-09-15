@@ -1,3 +1,3 @@
 - Edit this file in English.
-- Whenever a task introduces a staged change, add a corresponding changeset.
+- Whenever a task results in changes that impact user experience, please add the corresponding changesets.
 - Each changeset message should be kept under 120 characters.

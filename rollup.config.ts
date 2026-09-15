@@ -51,6 +51,25 @@ export default defineConfig([
       preserveModules: true,
       preserveModulesRoot: 'src',
     },
-    plugins: [dtsPlugin()],
+    plugins: [dtsPlugin(), markGeneratedTypesNoCheck()],
   },
 ])
+
+function markGeneratedTypesNoCheck() {
+  return {
+    // eslint-typegen can emit pattern index signatures that TypeScript rejects
+    // even though the generated rule option types are valid at runtime.
+    generateBundle(_options, bundle) {
+      for (const output of Object.values(bundle)) {
+        if (
+          output.type === 'chunk'
+          && output.fileName.endsWith('typegen.d.ts')
+          && output.code
+        ) {
+          output.code = `// @ts-nocheck\n${output.code}`
+        }
+      }
+    },
+    name: 'mark-generated-types-no-check',
+  }
+}

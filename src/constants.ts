@@ -8,3 +8,33 @@ export const JSON_FILES = '**/*.{json,json5,jsonc}'
 export const PACKAGE_JSON_FILES = ['**/package.json']
 
 export const TS_CONFIG_FILES = ['**/[jt]sconfig.json', '**/[jt]sconfig.*.json']
+
+export const INTERNAL_IMPORT_GLOB = '@/**'
+
+export function getImportOrderGroups(): Array<[string, ...string[]] | string> {
+  return [
+    'type',
+    'builtin',
+    'external',
+    'internal',
+    'parent',
+    'sibling',
+    'index',
+    'object',
+    'unknown',
+  ]
+}
+
+export function getPerfectionistImportGroups(): Array<[string, ...string[]] | string> {
+  return [
+    'type',
+    'builtin',
+    'external',
+    'internal',
+    'parent',
+    'sibling',
+    'index',
+    'style',
+    'unknown',
+  ]
+}

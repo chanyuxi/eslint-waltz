@@ -1,10 +1,7 @@
 import type { LinterConfig, ReactOptions } from '../types'
 
-import { TS_FILES } from '../constants'
 import {
-  getScriptFiles,
-  intersectFiles,
-  resolveFiles,
+  resolveScriptFiles,
   type ScriptScope,
 } from '../internal/files'
 import {
@@ -40,18 +37,12 @@ export default async function reactConfig(
   const resolvedConfig: ReactOptions
     = typeof options === 'boolean' ? {} : options
 
-  const scriptFiles = getScriptFiles(scriptScope)
-  const ruleFiles = resolveFiles(resolvedConfig.files, scriptFiles)
+  const {
+    files: ruleFiles,
+    parserTypeScriptFiles: customTypeScriptFiles,
+    typeScriptFiles: typeScriptRuleFiles,
+  } = resolveScriptFiles(scriptScope, resolvedConfig.files)
   const setupFiles = ruleFiles
-
-  const typeScriptRuleFiles = resolvedConfig.files
-    ? intersectFiles(resolvedConfig.files, scriptScope.typeScriptFiles)
-    : scriptScope.typeScriptFiles
-  const customTypeScriptFiles = resolvedConfig.files
-    && scriptScope.isEnableTypeScript
-    && scriptScope.isCustomTypeScriptFiles
-    ? intersectFiles(resolvedConfig.files, [TS_FILES])
-    : []
   const typeScriptParser = customTypeScriptFiles.length > 0
     ? await importTypeScriptParser()
     : undefined

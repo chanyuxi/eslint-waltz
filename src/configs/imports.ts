@@ -1,6 +1,10 @@
 import type { ImportsOptions, LinterConfig } from '../types'
 
 import {
+  getImportOrderGroups,
+  INTERNAL_IMPORT_GLOB,
+} from '../constants'
+import {
   getScriptFiles,
   resolveFiles,
   type ScriptScope,
@@ -29,21 +33,13 @@ export default async function importsConfig(
           orderImportKind: 'asc',
         },
         'distinctGroup': false,
-        'groups': [
-          'builtin',
-          'external',
-          'parent',
-          'sibling',
-          'index',
-          'type',
-          ['object', 'unknown'],
-        ],
+        'groups': getImportOrderGroups(),
         'named': true,
         'newlines-between': 'always',
         'pathGroups': [
           {
             group: 'internal',
-            pattern: '@/**',
+            pattern: INTERNAL_IMPORT_GLOB,
             position: 'before',
           },
           {
@@ -59,7 +55,7 @@ export default async function importsConfig(
             position: 'after',
           },
         ],
-        'pathGroupsExcludedImportTypes': ['builtin'],
+        'pathGroupsExcludedImportTypes': ['builtin', 'type'],
         'warnOnUnassignedImports': true,
       },
     ],
