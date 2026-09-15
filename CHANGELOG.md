@@ -1,5 +1,12 @@
 # @chanyuxi/eslint-waltz
 
+## 1.3.1
+
+### Patch Changes
+
+- Avoid running the build twice during release.
+- Align import sorting and improve public types and peer loader safety.
+
 ## 1.3.0
 
 ### Minor Changes
