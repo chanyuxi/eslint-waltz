@@ -13,7 +13,6 @@ export default async function tailwindcssConfig(
 ): Promise<LinterConfig[]> {
   const tailwindcss = await importTailwindcssPlugin()
 
-  const recommended = tailwindcss.configs.recommended
   const files = resolveFiles(
     options.files,
     getScriptFiles(scriptScope),
@@ -22,7 +21,13 @@ export default async function tailwindcssConfig(
   return [
     {
       files,
-      languageOptions: recommended.languageOptions,
+      languageOptions: {
+        parserOptions: {
+          // Since Tailwind can be enabled independently—even without enabling
+          // React—it ensures that JSX files are parsed correctly.
+          ecmaFeatures: { jsx: true },
+        },
+      },
       name: 'waltz/tailwindcss/setup',
       plugins: {
         tailwindcss,
@@ -32,11 +37,22 @@ export default async function tailwindcssConfig(
       files,
       name: 'waltz/tailwindcss/rules',
       rules: {
-        ...recommended.rules,
+        'tailwindcss/classnames-order': 'warn',
+        'tailwindcss/enforces-canonical-classname': 'warn',
+        'tailwindcss/enforces-negative-arbitrary-values': 'warn',
+        'tailwindcss/enforces-shorthand': 'warn',
+        'tailwindcss/important-modifier-suffix': 'warn',
+        'tailwindcss/no-arbitrary-value': 'off',
+        'tailwindcss/no-contradicting-classname': 'error',
+        // Generally, custom class names are supported, so the recommended practice
+        // is not followed here.
+        'tailwindcss/no-custom-classname': 'off',
+        'tailwindcss/no-unnecessary-arbitrary-value': 'warn',
+
         ...options.overrides,
       },
       settings: {
-        ...recommended.settings,
+        tailwindcss: {},
         ...options.settings,
       },
     },

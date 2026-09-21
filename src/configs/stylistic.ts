@@ -17,76 +17,6 @@ export default async function stylisticConfig(
     getScriptFiles(scriptScope),
   )
 
-  // Directly use the generated recommendation rules
-  const configs = eslintStylistic.configs.customize()
-
-  // This will enable the following rules.
-  // '@stylistic/array-bracket-spacing'
-  // '@stylistic/arrow-parens'
-  // '@stylistic/arrow-spacing'
-  // '@stylistic/block-spacing'
-  // '@stylistic/brace-style'
-  // '@stylistic/comma-dangle'
-  // '@stylistic/comma-spacing'
-  // '@stylistic/comma-style'
-  // '@stylistic/computed-property-spacing'
-  // '@stylistic/dot-location'
-  // '@stylistic/eol-last'
-  // '@stylistic/generator-star-spacing'
-  // '@stylistic/indent'
-  // '@stylistic/indent-binary-ops'
-  // '@stylistic/key-spacing'
-  // '@stylistic/keyword-spacing'
-  // '@stylistic/lines-between-class-members'
-  // '@stylistic/max-statements-per-line'
-  // '@stylistic/member-delimiter-style'
-  // '@stylistic/multiline-ternary'
-  // '@stylistic/new-parens'
-  // '@stylistic/no-extra-parens'
-  // '@stylistic/no-floating-decimal'
-  // '@stylistic/no-mixed-operators'
-  // '@stylistic/no-mixed-spaces-and-tabs'
-  // '@stylistic/no-multi-spaces'
-  // '@stylistic/no-multiple-empty-lines'
-  // '@stylistic/no-tabs'
-  // '@stylistic/no-trailing-spaces'
-  // '@stylistic/no-whitespace-before-property'
-  // '@stylistic/object-curly-spacing'
-  // '@stylistic/operator-linebreak'
-  // '@stylistic/padded-blocks'
-  // '@stylistic/quote-props'
-  // '@stylistic/quotes'
-  // '@stylistic/rest-spread-spacing'
-  // '@stylistic/semi'
-  // '@stylistic/semi-spacing'
-  // '@stylistic/space-before-blocks'
-  // '@stylistic/space-before-function-paren'
-  // '@stylistic/space-in-parens'
-  // '@stylistic/space-infix-ops'
-  // '@stylistic/space-unary-ops'
-  // '@stylistic/spaced-comment'
-  // '@stylistic/template-curly-spacing'
-  // '@stylistic/template-tag-spacing'
-  // '@stylistic/type-annotation-spacing'
-  // '@stylistic/type-generic-spacing'
-  // '@stylistic/type-named-tuple-spacing'
-  // '@stylistic/wrap-iife'
-  // '@stylistic/yield-star-spacing'
-  // '@stylistic/jsx-closing-bracket-location'
-  // '@stylistic/jsx-closing-tag-location'
-  // '@stylistic/jsx-curly-brace-presence'
-  // '@stylistic/jsx-curly-newline'
-  // '@stylistic/jsx-curly-spacing'
-  // '@stylistic/jsx-equals-spacing'
-  // '@stylistic/jsx-first-prop-new-line'
-  // '@stylistic/jsx-function-call-newline'
-  // '@stylistic/jsx-indent-props'
-  // '@stylistic/jsx-max-props-per-line'
-  // '@stylistic/jsx-one-expression-per-line'
-  // '@stylistic/jsx-quotes'
-  // '@stylistic/jsx-tag-spacing'
-  // '@stylistic/jsx-wrap-multilines'
-
   return [
     {
       files: ruleFiles,
@@ -99,7 +29,229 @@ export default async function stylisticConfig(
       files: ruleFiles,
       name: 'waltz/stylistic/rules',
       rules: {
-        ...configs.rules,
+        '@stylistic/array-bracket-spacing': ['error', 'never'],
+        '@stylistic/arrow-parens': [
+          'error',
+          'as-needed',
+          { requireForBlockBody: true },
+        ],
+        '@stylistic/arrow-spacing': [
+          'error',
+          { after: true, before: true },
+        ],
+        '@stylistic/block-spacing': ['error', 'always'],
+        '@stylistic/brace-style': [
+          'error',
+          'stroustrup',
+          { allowSingleLine: true },
+        ],
+        '@stylistic/comma-dangle': ['error', 'always-multiline'],
+        '@stylistic/comma-spacing': [
+          'error',
+          { after: true, before: false },
+        ],
+        '@stylistic/comma-style': ['error', 'last'],
+        '@stylistic/computed-property-spacing': [
+          'error',
+          'never',
+          { enforceForClassMembers: true },
+        ],
+        '@stylistic/dot-location': ['error', 'property'],
+        '@stylistic/eol-last': 'error',
+        '@stylistic/generator-star-spacing': [
+          'error',
+          { after: true, before: false },
+        ],
+        '@stylistic/indent': [
+          'error',
+          2,
+          {
+            ArrayExpression: 1,
+            CallExpression: { arguments: 1 },
+            flatTernaryExpressions: false,
+            FunctionDeclaration: {
+              body: 1,
+              parameters: 1,
+              returnType: 1,
+            },
+            FunctionExpression: {
+              body: 1,
+              parameters: 1,
+              returnType: 1,
+            },
+            ignoreComments: false,
+            ignoredNodes: ['TSUnionType', 'TSIntersectionType'],
+            ImportDeclaration: 1,
+            MemberExpression: 1,
+            ObjectExpression: 1,
+            offsetTernaryExpressions: true,
+            outerIIFEBody: 1,
+            SwitchCase: 1,
+            tabLength: 2,
+            VariableDeclarator: 1,
+          },
+        ],
+        '@stylistic/indent-binary-ops': ['error', 2],
+        '@stylistic/jsx-closing-bracket-location': 'error',
+        '@stylistic/jsx-closing-tag-location': 'error',
+        '@stylistic/jsx-curly-brace-presence': [
+          'error',
+          { propElementValues: 'always' },
+        ],
+        '@stylistic/jsx-curly-newline': 'error',
+        '@stylistic/jsx-curly-spacing': ['error', 'never'],
+        '@stylistic/jsx-equals-spacing': 'error',
+        '@stylistic/jsx-first-prop-new-line': 'error',
+        '@stylistic/jsx-function-call-newline': ['error', 'multiline'],
+        '@stylistic/jsx-indent-props': ['error', 2],
+        '@stylistic/jsx-max-props-per-line': [
+          'error',
+          { maximum: 1, when: 'multiline' },
+        ],
+        '@stylistic/jsx-one-expression-per-line': [
+          'error',
+          { allow: 'single-child' },
+        ],
+        '@stylistic/jsx-quotes': 'error',
+        '@stylistic/jsx-tag-spacing': [
+          'error',
+          {
+            afterOpening: 'never',
+            beforeClosing: 'never',
+            beforeSelfClosing: 'always',
+            closingSlash: 'never',
+          },
+        ],
+        '@stylistic/jsx-wrap-multilines': [
+          'error',
+          {
+            arrow: 'parens-new-line',
+            assignment: 'parens-new-line',
+            condition: 'parens-new-line',
+            declaration: 'parens-new-line',
+            logical: 'parens-new-line',
+            prop: 'parens-new-line',
+            propertyValue: 'parens-new-line',
+            return: 'parens-new-line',
+          },
+        ],
+        '@stylistic/key-spacing': [
+          'error',
+          { afterColon: true, beforeColon: false },
+        ],
+        '@stylistic/keyword-spacing': [
+          'error',
+          { after: true, before: true },
+        ],
+        '@stylistic/lines-between-class-members': [
+          'error',
+          'always',
+          { exceptAfterSingleLine: true },
+        ],
+        '@stylistic/max-statements-per-line': ['error', { max: 1 }],
+        '@stylistic/member-delimiter-style': [
+          'error',
+          {
+            multiline: {
+              delimiter: 'none',
+              requireLast: false,
+            },
+            multilineDetection: 'brackets',
+            overrides: {
+              interface: {
+                multiline: {
+                  delimiter: 'none',
+                  requireLast: false,
+                },
+              },
+            },
+            singleline: { delimiter: 'comma' },
+          },
+        ],
+        '@stylistic/multiline-ternary': ['error', 'always-multiline'],
+        '@stylistic/new-parens': 'error',
+        '@stylistic/no-extra-parens': ['error', 'functions'],
+        '@stylistic/no-floating-decimal': 'error',
+        '@stylistic/no-mixed-operators': [
+          'error',
+          {
+            allowSamePrecedence: true,
+            groups: [
+              ['==', '!=', '===', '!==', '>', '>=', '<', '<='],
+              ['&&', '||'],
+              ['in', 'instanceof'],
+            ],
+          },
+        ],
+        '@stylistic/no-mixed-spaces-and-tabs': 'error',
+        '@stylistic/no-multi-spaces': 'error',
+        '@stylistic/no-multiple-empty-lines': [
+          'error',
+          { max: 1, maxBOF: 0, maxEOF: 0 },
+        ],
+        '@stylistic/no-tabs': 'error',
+        '@stylistic/no-trailing-spaces': 'error',
+        '@stylistic/no-whitespace-before-property': 'error',
+        '@stylistic/object-curly-spacing': ['error', 'always'],
+        '@stylistic/operator-linebreak': ['error', 'before'],
+        '@stylistic/padded-blocks': [
+          'error',
+          { blocks: 'never', classes: 'never', switches: 'never' },
+        ],
+        '@stylistic/quote-props': ['error', 'consistent-as-needed'],
+        '@stylistic/quotes': [
+          'error',
+          'single',
+          { allowTemplateLiterals: 'always', avoidEscape: false },
+        ],
+        '@stylistic/rest-spread-spacing': ['error', 'never'],
+        '@stylistic/semi': ['error', 'never'],
+
+        '@stylistic/semi-spacing': [
+          'error',
+          { after: true, before: false },
+        ],
+        '@stylistic/space-before-blocks': ['error', 'always'],
+        '@stylistic/space-before-function-paren': [
+          'error',
+          { anonymous: 'always', asyncArrow: 'always', named: 'never' },
+        ],
+        '@stylistic/space-in-parens': ['error', 'never'],
+        '@stylistic/space-infix-ops': 'error',
+        '@stylistic/space-unary-ops': [
+          'error',
+          { nonwords: false, words: true },
+        ],
+        '@stylistic/spaced-comment': [
+          'error',
+          'always',
+          {
+            block: {
+              balanced: true,
+              exceptions: ['*'],
+              markers: ['!'],
+            },
+            line: {
+              exceptions: ['/', '#'],
+              markers: ['/'],
+            },
+          },
+        ],
+        '@stylistic/template-curly-spacing': 'error',
+        '@stylistic/template-tag-spacing': ['error', 'never'],
+        '@stylistic/type-annotation-spacing': ['error', {}],
+        '@stylistic/type-generic-spacing': 'error',
+        '@stylistic/type-named-tuple-spacing': 'error',
+        '@stylistic/wrap-iife': [
+          'error',
+          'any',
+          { functionPrototypeMethods: true },
+        ],
+        '@stylistic/yield-star-spacing': [
+          'error',
+          { after: true, before: false },
+        ],
+
         ...options.overrides,
       },
     },
