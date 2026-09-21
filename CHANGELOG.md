@@ -1,5 +1,11 @@
 # @chanyuxi/eslint-waltz
 
+## 1.3.2
+
+### Patch Changes
+
+- Expand Tailwind CSS and Stylistic recommended rules explicitly.
+
 ## 1.3.1
 
 ### Patch Changes
