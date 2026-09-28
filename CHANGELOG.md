@@ -1,5 +1,11 @@
 # @chanyuxi/eslint-waltz
 
+## 1.4.0
+
+### Minor Changes
+
+- Add the `globalIgnores` option for ESLint global ignore patterns.
+
 ## 1.3.2
 
 ### Patch Changes
