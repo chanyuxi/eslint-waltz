@@ -103,6 +103,13 @@ export interface WaltzOptions {
    */
   gitignore?: boolean | FlatGitignoreOptions
   /**
+   * Glob patterns to ignore globally.
+   *
+   * These patterns are applied by ESLint before any of Waltz's file-scoped
+   * configurations.
+   */
+  globalIgnores?: Linter.Config['ignores']
+  /**
    * Enable rules for validating imports and exports. Import ordering is
    * provided by Perfectionist when enabled, and by `imports/order` otherwise.
    *

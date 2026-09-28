@@ -25,6 +25,25 @@ test('script-only features do not match TypeScript unless enabled', async () => 
   expect(typescriptImportRules?.files).toEqual([JS_FILES, TS_FILES])
 })
 
+test('global ignores exclude matching files from linting', async () => {
+  const configs = await waltz({ globalIgnores: ['generated/**'] })
+
+  expect(configByName(configs, 'waltz/global-ignores')).toMatchObject({
+    ignores: ['generated/**'],
+  })
+
+  const eslint = new ESLint({
+    overrideConfig: configs,
+    overrideConfigFile: true,
+  })
+  const [result] = await eslint.lintText('var value = 1\n', {
+    filePath: 'generated/file.js',
+  })
+
+  expect(result.warningCount).toBe(1)
+  expect(result.messages[0]?.message).toContain('File ignored')
+})
+
 test('custom TypeScript files limit dependent module scopes', async () => {
   const typeScriptFiles = ['src/**/*.ts']
   const configs = await waltz({

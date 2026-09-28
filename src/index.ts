@@ -29,6 +29,13 @@ async function waltz(
 
   const configs: UnresolvedLinterConfig[] = []
 
+  if (options.globalIgnores) {
+    configs.push({
+      ignores: options.globalIgnores,
+      name: 'waltz/global-ignores',
+    })
+  }
+
   if (options.gitignore) {
     configs.push(gitignoreConfig(options.gitignore))
   }
