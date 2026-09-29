@@ -4,9 +4,6 @@ import type {
 } from '../types'
 
 import {
-  getPerfectionistImportGroups,
-} from '../constants'
-import {
   getScriptFiles,
   resolveFiles,
   type ScriptScope,
@@ -67,7 +64,17 @@ export default async function perfectionistConfig(
           'error',
           {
             ...importSortOptions,
-            groups: getPerfectionistImportGroups(),
+            groups: [
+              'type',
+              'builtin',
+              'external',
+              'internal',
+              'parent',
+              'sibling',
+              'index',
+              'style',
+              'unknown',
+            ],
             internalPattern: ['^@/.+'],
           },
         ],

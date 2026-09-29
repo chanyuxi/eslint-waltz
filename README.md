@@ -1,39 +1,29 @@
 # @chanyuxi/eslint-waltz
 
-Composable ESLint flat config for JavaScript, TypeScript, JSONC, React, Tailwind CSS, Perfectionist, and Vitest.
+Composable ESLint flat config for JavaScript, TypeScript, JSONC, imports, React, Tailwind CSS, Perfectionist, and Vitest.
 
 Requires Node.js `>=20.19.0`.
 
-## Install
+## Quick start
 
-Install the package, ESLint, and the peer dependencies used by the default configuration:
-
-```bash
-pnpm add -D @chanyuxi/eslint-waltz eslint eslint-plugin-jsonc eslint-plugin-import-x eslint-plugin-perfectionist jsonc-eslint-parser
-```
-
-`@eslint/js`, `@stylistic/eslint-plugin`, `globals`, and `jsonc-parser` are included automatically.
-
-Install peers only for the optional modules you enable:
+Run the interactive initializer from your project root:
 
 ```bash
-# TypeScript
-pnpm add -D typescript-eslint
-
-# React
-pnpm add -D eslint-plugin-react-x eslint-plugin-react-debug eslint-plugin-react-dom eslint-plugin-react-hooks-extra eslint-plugin-react-naming-convention eslint-plugin-react-web-api
-
-# Tailwind CSS
-pnpm add -D eslint-plugin-tailwindcss tailwindcss
-
-# .gitignore support
-pnpm add -D eslint-config-flat-gitignore
-
-# Vitest
-pnpm add -D @vitest/eslint-plugin vitest
+pnpm dlx @chanyuxi/eslint-waltz init
 ```
 
-## Usage
+The initializer detects your package manager and existing dependencies, creates
+`eslint.config.ts`, installs missing dependencies for the selected features,
+and can configure ESLint fix-on-save in VS Code while preserving existing
+settings and comments.
+
+If the package is already installed, use its local binary:
+
+```bash
+pnpm exec eslint-waltz init
+```
+
+## Configuration
 
 ```ts
 // eslint.config.ts
@@ -45,19 +35,41 @@ export default waltz({
 })
 ```
 
-Enabled by default:
+The default configuration includes JavaScript, stylistic rules, JSONC,
+import validation, and Perfectionist's `recommended-alphabetical` preset.
+Optional modules are enabled with `ts`, `react`, `tailwindcss`, `gitignore`,
+and `vitest`. All options are fully typed.
 
-- JavaScript and stylistic rules
-- JSONC rules
-- import validation
-- Perfectionist with `recommended-alphabetical`
+## CLI
 
-Optional: `ts`, `react`, `tailwindcss`, `gitignore`, and `vitest`.
+```bash
+eslint-waltz init     # create or update eslint.config.ts
+eslint-waltz version  # print the installed version
+```
 
-More options are documented in the exported TypeScript types.
+Use `eslint-waltz --help` to see the available commands. VS Code
+fix-on-save synchronization is part of `init`.
 
-The potentially expensive module-resolution rules are disabled by default. Enable
-them explicitly when your project needs them:
+## Advanced options
+
+### TypeScript scope
+
+`ts.files` limits the TypeScript files included by modules that automatically
+support TypeScript. JavaScript files keep their normal scope, and a module's
+own `files` option can narrow or override it. Vitest also intersects its test
+patterns with this scope.
+
+```ts
+export default waltz({
+  ts: { files: ['src/**/*.ts'] },
+  react: true,
+})
+```
+
+### Module resolution
+
+Potentially expensive module-resolution rules are disabled by default. Enable
+only the rules you need:
 
 ```ts
 export default waltz({
@@ -70,30 +82,7 @@ export default waltz({
 })
 ```
 
-## TypeScript file scope
-
-When `ts.files` is provided, it is the maximum TypeScript scope used by the
-other modules that automatically include TypeScript files. JavaScript files
-keep their normal scope, and a module's own `files` option can override this
-limit. Vitest additionally intersects its test-file patterns with this scope.
-
-```ts
-export default waltz({
-  ts: { files: ['src/**/*.ts'] },
-  react: true,
-})
-```
-
-## VS Code synchronization
-
-Run this command from your project root to enable ESLint fix-on-save settings
-while preserving existing `.vscode/settings.json` values and comments:
-
-```bash
-npx eslint-waltz sync-vscode
-```
-
-React plugin settings can be customized when needed:
+### React settings
 
 ```ts
 export default waltz({

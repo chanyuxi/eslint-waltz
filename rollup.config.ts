@@ -35,7 +35,7 @@ export default defineConfig([
     plugins: [nodeResolver(), commonjs(), typescript()],
   },
   {
-    external: [/^node:/],
+    external: [/^node:/, '@clack/prompts'],
     input: 'src/cli/index.ts',
     output: {
       file: 'dist/cli.js',
