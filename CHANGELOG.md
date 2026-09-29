@@ -1,5 +1,16 @@
 # @chanyuxi/eslint-waltz
 
+## 1.5.0
+
+### Minor Changes
+
+- Replace the CLI with interactive `init` and `version` commands.
+
+### Patch Changes
+
+- Fix Windows package-manager spawning during CLI initialization.
+- Refine the README with a concise setup and configuration guide.
+
 ## 1.4.0
 
 ### Minor Changes
