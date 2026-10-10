@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./assets/images/github_banner_image.png" alt="@chanyuxi/eslint-waltz" width="100%" />
+</p>
+
 # @chanyuxi/eslint-waltz
 
 Composable ESLint flat config for JavaScript, TypeScript, JSONC, imports, React, Tailwind CSS, Perfectionist, and Vitest.
